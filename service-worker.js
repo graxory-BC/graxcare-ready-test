@@ -1,8 +1,9 @@
-const CACHE = 'graxcare-ready-shell-v2';
+const CACHE = 'graxcare-ready-shell-v3';
 const APP_SHELL = [
   './',
   './index.html',
   './styles.css',
+  './visual-final.css',
   './app.js',
   './manifest.webmanifest',
   './assets/placeholder-icon-192.png',
