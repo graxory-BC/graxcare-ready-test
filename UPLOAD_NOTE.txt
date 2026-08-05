@@ -1,0 +1,5 @@
+GraxCare Ready — HTTPS Test Build
+
+Upload the CONTENTS of this folder to the root of the public GitHub repository graxcare-ready-test.
+Do not upload the outer folder itself.
+This is a temporary validation build, not the commercial release.
