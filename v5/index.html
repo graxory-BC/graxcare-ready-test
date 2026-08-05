@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#061a38">
+  <meta name="description" content="GraxCare Ready — The 60-Second Family Care Action System.">
+  <title>GraxCare Ready</title>
+  <link rel="manifest" href="./manifest.webmanifest?v=5">
+  <link rel="stylesheet" href="../styles.css?v=5">
+  <link rel="stylesheet" href="../visual-final.css?v=5">
+  <link rel="stylesheet" href="./visual-v5.css?v=5">
+  <script src="./update-shell.js?v=5" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="app-header">
+    <button class="brand" type="button" data-route="home" aria-label="Go to home">
+      <span class="brand-placeholder" aria-hidden="true">GCR</span>
+      <span class="brand-copy"><strong>GraxCare</strong><span>Ready</span></span>
+    </button>
+    <div class="header-actions">
+      <span id="connectionStatus" class="status-pill" role="status">Online</span>
+      <button id="installButton" class="button button-secondary button-small" type="button" hidden>Add to Home</button>
+    </div>
+  </header>
+
+  <main id="main" class="app-shell" tabindex="-1">
+    <section id="homeView" class="view" data-view="home">
+      <div class="hero-card">
+        <p class="eyebrow">The 60-Second Family Care Action System</p>
+        <h1>When something changes, everyone knows what to do next.</h1>
+        <p>Choose a person, choose the situation, and follow a clear action list.</p>
+      </div>
+
+      <section class="panel" aria-labelledby="whoTitle">
+        <div class="section-heading">
+          <div>
+            <p class="step-label">Step 1 of 3</p>
+            <h2 id="whoTitle">Who needs help?</h2>
+          </div>
+          <button id="addProfileButton" class="button button-secondary" type="button">Add family member</button>
+        </div>
+        <div id="profilesList" class="profiles-grid" aria-live="polite"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="situationTitle">
+        <div class="section-heading">
+          <div>
+            <p class="step-label">Step 2 of 3</p>
+            <h2 id="situationTitle">What is happening?</h2>
+          </div>
+          <p id="selectionHint" class="selection-hint">Select a family member first.</p>
+        </div>
+        <div id="situationsGrid" class="situations-grid"></div>
+      </section>
+    </section>
+
+    <section id="actionView" class="view" data-view="action" hidden>
+      <button class="text-button back-button" type="button" data-route="home">← Back</button>
+      <div id="actionContent"></div>
+    </section>
+
+    <section id="followupView" class="view" data-view="followup" hidden>
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">Follow Up</p>
+          <h1>Keep the next steps organized.</h1>
+        </div>
+        <button id="addFollowupButton" class="button button-primary" type="button">Add follow-up</button>
+      </div>
+      <div id="followupList" class="stack-list"></div>
+    </section>
+
+    <section id="backupView" class="view" data-view="backup" hidden>
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">Private by design</p>
+          <h1>Backup and restore</h1>
+          <p>Your information stays on this device unless you export an encrypted backup.</p>
+        </div>
+      </div>
+      <div class="two-column">
+        <article class="panel action-panel">
+          <h2>Export encrypted backup</h2>
+          <p>Create a password-protected file that can be moved to another device.</p>
+          <button id="exportBackupButton" class="button button-primary" type="button">Export backup</button>
+        </article>
+        <article class="panel action-panel">
+          <h2>Restore backup</h2>
+          <p>Replace the information on this device with a valid GraxCare Ready backup.</p>
+          <label class="button button-secondary file-button" for="restoreFileInput">Choose backup file</label>
+          <input id="restoreFileInput" class="visually-hidden" type="file" accept=".graxcare,.json,application/json">
+        </article>
+      </div>
+      <article class="panel danger-panel">
+        <h2>Reset this device</h2>
+        <p>This removes profiles, action progress, and follow-up items from this browser.</p>
+        <button id="resetDataButton" class="button button-danger" type="button">Delete all local data</button>
+      </article>
+    </section>
+
+    <section id="helpView" class="view" data-view="help" hidden>
+      <div class="page-heading">
+        <div>
+          <p class="eyebrow">Simple. Private. Prepared.</p>
+          <h1>How GraxCare Ready works</h1>
+        </div>
+      </div>
+      <div class="help-grid">
+        <article class="panel"><span class="number-badge">1</span><h2>Prepare</h2><p>Add only the information your family may need quickly.</p></article>
+        <article class="panel"><span class="number-badge">2</span><h2>Act</h2><p>Select a situation and complete the short action list.</p></article>
+        <article class="panel"><span class="number-badge">3</span><h2>Follow Up</h2><p>Track appointments, medication changes, questions, and assigned tasks.</p></article>
+      </div>
+      <article class="panel legal-note">
+        <h2>Important</h2>
+        <p>GraxCare Ready organizes information and next steps. It does not provide medical advice and does not replace emergency services. In the United States, call 911 when someone may be in immediate danger.</p>
+      </article>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Primary navigation">
+    <button type="button" data-route="home" class="nav-button active"><span aria-hidden="true">⌂</span>Home</button>
+    <button type="button" data-route="followup" class="nav-button"><span aria-hidden="true">✓</span>Follow Up</button>
+    <button type="button" data-route="backup" class="nav-button"><span aria-hidden="true">⇩</span>Backup</button>
+    <button type="button" data-route="help" class="nav-button"><span aria-hidden="true">?</span>Help</button>
+  </nav>
+
+  <div id="modalRoot" class="modal-root" hidden></div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="../app.js?v=5" defer></script>
+</body>
+</html>
