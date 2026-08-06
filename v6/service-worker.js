@@ -1,17 +1,16 @@
-const CACHE = 'graxcare-ready-definitive-visible-premium-20260806c';
+const CACHE = 'graxcare-ready-visual-lock-20260806d';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest?r=scrollfix-20260805',
-  './visual-v6.css?r=visible-premium-20260806c',
-  './commercial-theme.css?r=commercial-20260806',
-  './commercial-sprite.css?r=visible-premium-20260806c',
-  './commercial-icons.css?r=commercial-20260806',
-  './premium-visible-v3.css?r=visible-premium-20260806c',
+  './visual-v6.css?r=visual-lock-20260806d',
+  './commercial-theme.css?r=visual-lock-20260806d',
+  './commercial-sprite.css?r=visual-lock-20260806d',
+  './commercial-icons.css?r=visual-lock-20260806d',
   './commercial-logo.css?r=original-logo-20260806',
   './commercial-logo.js?r=original-logo-20260806',
+  './update-shell.js?r=visual-lock-20260806d',
   './assets/graxcare-logo-master-small.b64.txt',
-  './update-shell.js?r=scrollfix-20260805',
   '../styles.css?r=scrollfix-20260805',
   '../visual-final.css?r=scrollfix-20260805',
   '../app.js?r=scrollfix-20260805',
@@ -70,16 +69,5 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  event.respondWith(
-    caches.match(request).then(cached => {
-      if (cached) return cached;
-      return fetch(request).then(response => {
-        if (response.ok) {
-          const copy = response.clone();
-          caches.open(CACHE).then(cache => cache.put(request, copy));
-        }
-        return response;
-      });
-    })
-  );
+  event.respondWith(networkFirst(request));
 });
