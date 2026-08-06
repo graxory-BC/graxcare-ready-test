@@ -1,12 +1,13 @@
-const CACHE = 'graxcare-ready-definitive-premium-icons-20260806';
+const CACHE = 'graxcare-ready-definitive-visible-premium-20260806c';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest?r=scrollfix-20260805',
-  './visual-v6.css?r=commercial-20260806',
+  './visual-v6.css?r=visible-premium-20260806c',
   './commercial-theme.css?r=commercial-20260806',
-  './commercial-sprite.css?r=commercial-20260806',
+  './commercial-sprite.css?r=visible-premium-20260806c',
   './commercial-icons.css?r=commercial-20260806',
+  './premium-visible-v3.css?r=visible-premium-20260806c',
   './commercial-logo.css?r=original-logo-20260806',
   './commercial-logo.js?r=original-logo-20260806',
   './assets/graxcare-logo-master-small.b64.txt',
