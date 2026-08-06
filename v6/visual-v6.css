@@ -1,0 +1,49 @@
+/* GraxCare Ready V6 — presentation only. app.js remains unchanged. */
+html,body{overflow-x:hidden!important}
+.app-shell,.view,.panel,#homeView,#situationsGrid{min-width:0!important;max-width:100%!important}
+.situations-grid{display:grid!important}
+.situation-card{min-width:0!important;width:100%!important}
+.situation-card strong{overflow-wrap:anywhere!important;word-break:normal!important}
+
+@media(max-width:719px){
+  .app-header{min-height:66px!important;padding:8px 12px!important}
+  .app-header .brand{display:flex!important;align-items:center!important;gap:9px!important;min-width:0!important}
+  .app-header .brand-copy{display:flex!important;visibility:visible!important;opacity:1!important;font-size:14px!important;line-height:1.02!important}
+  .brand-placeholder{width:40px!important;height:40px!important;flex:0 0 40px!important}
+  .header-actions{margin-left:auto!important}
+  .app-shell{width:100%!important;padding:12px 10px calc(138px + env(safe-area-inset-bottom))!important}
+  #homeView{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+  .hero-card{min-height:178px!important;padding:20px 17px!important;border-radius:22px!important}
+  .hero-card h1{font-size:clamp(27px,8.4vw,35px)!important;line-height:1.05!important}
+  .panel{width:100%!important;padding:14px!important;border-radius:18px!important}
+  .section-heading{display:flex!important;flex-direction:column!important;gap:10px!important}
+  .selection-hint{align-self:flex-start!important}
+  #situationsGrid.situations-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;margin-top:12px!important}
+  #situationsGrid .situation-card{display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;align-items:center!important;justify-content:start!important;min-height:88px!important;padding:11px 10px!important;border-radius:14px!important;gap:9px!important}
+  #situationsGrid .situation-icon{width:36px!important;height:36px!important;flex:0 0 36px!important;border-radius:10px!important;font-size:16px!important}
+  #situationsGrid .situation-card strong{font-size:11.5px!important;line-height:1.22!important;font-weight:800!important;text-align:left!important}
+  .profiles-grid{grid-template-columns:1fr!important}
+  .bottom-nav{width:calc(100% - 14px)!important;left:50%!important;bottom:7px!important}
+}
+
+@media(max-width:355px){
+  .app-header .brand-copy{font-size:13px!important}
+  #situationsGrid.situations-grid{gap:8px!important}
+  #situationsGrid .situation-card{min-height:84px!important;padding:9px 8px!important;gap:7px!important}
+  #situationsGrid .situation-card strong{font-size:10.7px!important}
+}
+
+@media(min-width:720px) and (max-width:1099px){
+  .app-shell{width:100%!important;padding-left:112px!important;padding-right:20px!important}
+  #homeView{display:grid!important;grid-template-columns:minmax(230px,.8fr) minmax(0,1.35fr)!important;gap:18px!important}
+  #homeView .hero-card{grid-column:1/-1!important}
+  #situationsGrid.situations-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+
+@media(min-width:1100px){
+  .app-shell{width:100%!important;max-width:1600px!important;padding-left:218px!important;padding-right:28px!important}
+  #homeView{display:grid!important;grid-template-columns:minmax(280px,340px) minmax(0,1fr)!important;gap:18px!important}
+  #homeView .hero-card{grid-column:1/-1!important}
+  #situationsGrid.situations-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  .panel{min-width:0!important}
+}
