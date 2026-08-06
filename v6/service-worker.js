@@ -1,13 +1,16 @@
-const CACHE = 'graxcare-ready-definitive-stable-20260805';
+const CACHE = 'graxcare-ready-definitive-commercial-20260806';
 const APP_SHELL = [
   './',
   './index.html',
-  './manifest.webmanifest?r=final-20260805',
-  './visual-v6.css?r=final-20260805',
-  './update-shell.js?r=final-20260805',
-  '../styles.css?r=final-20260805',
-  '../visual-final.css?r=final-20260805',
-  '../app.js?r=final-20260805',
+  './manifest.webmanifest?r=scrollfix-20260805',
+  './visual-v6.css?r=commercial-20260806',
+  './commercial-theme.css?r=commercial-20260806',
+  './commercial-sprite.css?r=commercial-20260806',
+  './commercial-icons.css?r=commercial-20260806',
+  './update-shell.js?r=scrollfix-20260805',
+  '../styles.css?r=scrollfix-20260805',
+  '../visual-final.css?r=scrollfix-20260805',
+  '../app.js?r=scrollfix-20260805',
   '../assets/placeholder-icon-192.png',
   '../assets/placeholder-icon-512.png'
 ];
