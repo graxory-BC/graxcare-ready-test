@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const refreshKey = 'gcr-premium-direct-20260806f';
+  const refreshKey = 'gcr-premium-reset-20260806g';
   if (!('serviceWorker' in navigator)) return;
 
   let reloading = false;
@@ -12,9 +12,10 @@
     window.location.reload();
   });
 
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.ready
-      .then(registration => registration.update())
-      .catch(() => {});
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      await registration.update();
+    } catch {}
   }, { once: true });
 })();
