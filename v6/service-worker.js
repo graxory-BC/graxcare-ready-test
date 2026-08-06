@@ -1,4 +1,4 @@
-const CACHE = 'graxcare-ready-definitive-original-logo-20260806b';
+const CACHE = 'graxcare-ready-definitive-premium-icons-20260806';
 const APP_SHELL = [
   './',
   './index.html',
