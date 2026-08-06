@@ -1,16 +1,16 @@
-const CACHE = 'graxcare-ready-premium-svg-20260806e';
+const CACHE = 'graxcare-ready-premium-direct-20260806f';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest?r=scrollfix-20260805',
-  './visual-v6.css?r=visual-lock-20260806d',
-  './commercial-theme.css?r=visual-lock-20260806d',
-  './commercial-sprite.css?r=visual-lock-20260806d',
-  './commercial-icons.css?r=premium-svg-20260806e',
-  './premium-icon-art.css?r=premium-svg-20260806e',
+  './visual-v6.css?r=premium-direct-20260806f',
+  './commercial-theme.css?r=premium-direct-20260806f',
+  './commercial-sprite.css?r=premium-direct-20260806f',
+  './commercial-icons.css?r=premium-direct-20260806f',
+  './premium-icon-art.css?r=premium-direct-20260806f',
   './commercial-logo.css?r=original-logo-20260806',
   './commercial-logo.js?r=original-logo-20260806',
-  './update-shell.js?r=visual-lock-20260806d',
+  './update-shell.js?r=premium-direct-20260806f',
   './assets/graxcare-logo-master-small.b64.txt',
   '../styles.css?r=scrollfix-20260805',
   '../visual-final.css?r=scrollfix-20260805',
