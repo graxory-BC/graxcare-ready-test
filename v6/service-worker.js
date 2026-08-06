@@ -1,42 +1,42 @@
-const CACHE = 'graxcare-ready-premium-direct-20260806f';
+const CACHE = 'graxcare-ready-premium-reset-20260806g';
 const APP_SHELL = [
   './',
   './index.html',
-  './manifest.webmanifest?r=scrollfix-20260805',
-  './visual-v6.css?r=premium-direct-20260806f',
-  './commercial-theme.css?r=premium-direct-20260806f',
-  './commercial-sprite.css?r=premium-direct-20260806f',
-  './commercial-icons.css?r=premium-direct-20260806f',
-  './premium-icon-art.css?r=premium-direct-20260806f',
+  './manifest.webmanifest?r=premium-reset-20260806g',
+  './visual-v6.css?r=premium-reset-20260806g',
+  './premium-icon-art.css?r=premium-reset-20260806g',
   './commercial-logo.css?r=original-logo-20260806',
   './commercial-logo.js?r=original-logo-20260806',
-  './update-shell.js?r=premium-direct-20260806f',
+  './update-shell.js?r=premium-reset-20260806g',
   './assets/graxcare-logo-master-small.b64.txt',
-  '../styles.css?r=scrollfix-20260805',
-  '../visual-final.css?r=scrollfix-20260805',
-  '../app.js?r=scrollfix-20260805',
+  '../styles.css?r=premium-reset-20260806g',
+  '../visual-final.css?r=premium-reset-20260806g',
+  '../app.js?r=premium-reset-20260806g',
   '../assets/placeholder-icon-192.png',
   '../assets/placeholder-icon-512.png'
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE)
-      .then(cache => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await Promise.all(APP_SHELL.map(async url => {
+      try {
+        const response = await fetch(url, { cache: 'reload' });
+        if (response.ok) await cache.put(url, response);
+      } catch {}
+    }));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(
-        keys
-          .filter(key => key.startsWith('graxcare-ready-') && key !== CACHE)
-          .map(key => caches.delete(key))
-      ))
-      .then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys
+      .filter(key => key.startsWith('graxcare-ready-') && key !== CACHE)
+      .map(key => caches.delete(key)));
+    await self.clients.claim();
+  })());
 });
 
 async function networkFirst(request, fallbackUrl = null) {
@@ -61,7 +61,6 @@ async function networkFirst(request, fallbackUrl = null) {
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
-
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
