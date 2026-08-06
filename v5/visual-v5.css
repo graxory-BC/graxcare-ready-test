@@ -1,4 +1,4 @@
-/* GraxCare Ready visual candidate v5. Presentation only. */
+/* GraxCare Ready visual candidate v6. Presentation only; app.js is unchanged. */
 html,body{overflow-x:hidden}
 .app-shell,.view,.panel,#homeView,#situationsGrid{min-width:0;max-width:100%}
 .situations-grid{display:grid!important}
@@ -7,28 +7,35 @@ html,body{overflow-x:hidden}
 
 @media (max-width:719px){
   .app-header{min-height:64px!important;padding:8px 12px!important}
-  .brand-copy{display:flex!important;font-size:14px!important}
+  .app-header .brand{display:flex!important;align-items:center!important;min-width:0!important}
+  .app-header .brand .brand-copy{display:flex!important;visibility:visible!important;opacity:1!important;font-size:14px!important;line-height:1.02!important}
   .header-actions{margin-left:auto}
-  .app-shell{width:100%!important;padding:12px 10px calc(92px + env(safe-area-inset-bottom))!important}
+  .app-shell{width:100%!important;padding:12px 10px calc(132px + env(safe-area-inset-bottom))!important}
   #homeView{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
   .hero-card{min-height:178px!important;padding:20px 17px!important;border-radius:22px!important}
   .hero-card h1{font-size:clamp(27px,8.4vw,35px)!important;line-height:1.05!important}
   .panel{width:100%!important;padding:14px!important;border-radius:18px!important}
   .section-heading{display:flex!important;flex-direction:column!important;gap:10px!important}
   .selection-hint{align-self:flex-start!important}
-  #situationsGrid.situations-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;margin-top:12px!important}
-  #situationsGrid .situation-card{display:flex!important;min-height:106px!important;padding:9px 7px!important;border-radius:14px!important;align-items:flex-start!important;justify-content:space-between!important}
-  #situationsGrid .situation-icon{width:34px!important;height:34px!important;flex:0 0 34px!important;border-radius:10px!important;font-size:16px!important}
-  #situationsGrid .situation-card strong{font-size:10px!important;line-height:1.18!important;font-weight:800!important}
+  #situationsGrid.situations-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;margin-top:12px!important}
+  #situationsGrid .situation-card{display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;align-items:center!important;justify-content:start!important;min-height:88px!important;padding:11px 10px!important;border-radius:14px!important;gap:9px!important}
+  #situationsGrid .situation-icon{width:36px!important;height:36px!important;flex:0 0 36px!important;border-radius:10px!important;font-size:16px!important}
+  #situationsGrid .situation-card strong{font-size:11.5px!important;line-height:1.22!important;font-weight:800!important;text-align:left!important}
   .profiles-grid{grid-template-columns:1fr!important}
   .bottom-nav{width:calc(100% - 14px)!important;left:50%!important;bottom:7px!important}
 }
 
+@media (min-width:430px) and (max-width:719px){
+  #situationsGrid.situations-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
+  #situationsGrid .situation-card{display:flex!important;min-height:108px!important;padding:10px 8px!important;align-items:flex-start!important;justify-content:space-between!important;gap:8px!important}
+  #situationsGrid .situation-card strong{font-size:10.8px!important;line-height:1.2!important}
+}
+
 @media (max-width:355px){
-  .brand-copy{display:flex!important}
-  #situationsGrid.situations-grid{gap:6px!important}
-  #situationsGrid .situation-card{min-height:102px!important;padding:8px 6px!important}
-  #situationsGrid .situation-card strong{font-size:9.4px!important}
+  .app-header .brand .brand-copy{display:flex!important;visibility:visible!important;opacity:1!important;font-size:13px!important}
+  #situationsGrid.situations-grid{gap:8px!important}
+  #situationsGrid .situation-card{min-height:84px!important;padding:9px 8px!important;gap:7px!important}
+  #situationsGrid .situation-card strong{font-size:10.8px!important}
 }
 
 @media (min-width:720px) and (max-width:1099px){
