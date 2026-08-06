@@ -1,4 +1,4 @@
-const CACHE = 'graxcare-ready-visual-lock-20260806d';
+const CACHE = 'graxcare-ready-premium-svg-20260806e';
 const APP_SHELL = [
   './',
   './index.html',
@@ -6,7 +6,8 @@ const APP_SHELL = [
   './visual-v6.css?r=visual-lock-20260806d',
   './commercial-theme.css?r=visual-lock-20260806d',
   './commercial-sprite.css?r=visual-lock-20260806d',
-  './commercial-icons.css?r=visual-lock-20260806d',
+  './commercial-icons.css?r=premium-svg-20260806e',
+  './premium-icon-art.css?r=premium-svg-20260806e',
   './commercial-logo.css?r=original-logo-20260806',
   './commercial-logo.js?r=original-logo-20260806',
   './update-shell.js?r=visual-lock-20260806d',
