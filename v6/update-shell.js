@@ -2,7 +2,7 @@
   'use strict';
   if (!('serviceWorker' in navigator)) return;
 
-  const RESET_KEY = 'graxcare_v6_shell_reset_done';
+  const RESET_KEY = 'graxcare_definitive_shell_20260805';
   let refreshing = false;
 
   navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -21,18 +21,18 @@
           await Promise.all(names.map(name => caches.delete(name)));
         }
         localStorage.setItem(RESET_KEY, '1');
-        window.location.replace('./?clean=v6');
+        window.location.replace('./?refresh=definitive');
         return;
       }
 
-      const registration = await navigator.serviceWorker.register('./service-worker.js?v=6', {
+      const registration = await navigator.serviceWorker.register('./service-worker.js?r=final-20260805', {
         scope: './',
         updateViaCache: 'none'
       });
       await registration.update();
       if (registration.waiting) registration.waiting.postMessage({ type: 'SKIP_WAITING' });
     } catch {
-      // Visual and functional core remain available even if installation is unavailable.
+      // Core functionality remains available if the update check is unavailable.
     }
   });
 })();
