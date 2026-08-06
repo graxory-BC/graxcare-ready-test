@@ -1,13 +1,13 @@
-const CACHE = 'graxcare-ready-visual-v5';
+const CACHE = 'graxcare-ready-visual-v6';
 const APP_SHELL = [
   './',
   './index.html',
-  './manifest.webmanifest',
-  './visual-v5.css',
-  './update-shell.js',
-  '../styles.css?v=5',
-  '../visual-final.css?v=5',
-  '../app.js?v=5',
+  './manifest.webmanifest?v=6',
+  './visual-v5.css?v=6',
+  './update-shell.js?v=6',
+  '../styles.css?v=6',
+  '../visual-final.css?v=6',
+  '../app.js?v=6',
   '../assets/placeholder-icon-192.png',
   '../assets/placeholder-icon-512.png'
 ];
