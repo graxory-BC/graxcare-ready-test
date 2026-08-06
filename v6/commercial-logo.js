@@ -5,7 +5,9 @@
     if (!response.ok) throw new Error('Logo data unavailable');
     return response.text();
   }))).then(chunks => {
-    const src = `data:image/webp;base64,${chunks.join('').replace(/\s+/g,'')}`;
+    const base64 = chunks.join('').replace(/\s+/g,'');
+    if (base64.length !== 21136) throw new Error('Logo data incomplete');
+    const src = `data:image/webp;base64,${base64}`;
     const brand = document.querySelector('.brand');
     if (!brand) return;
     const image = document.createElement('img');
