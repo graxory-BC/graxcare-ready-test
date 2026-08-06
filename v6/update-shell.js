@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const refreshKey = 'gcr-visual-lock-20260806d';
+  const refreshKey = 'gcr-premium-direct-20260806f';
   if (!('serviceWorker' in navigator)) return;
 
   let reloading = false;
