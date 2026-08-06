@@ -1,4 +1,4 @@
-const CACHE = 'graxcare-ready-definitive-commercial-20260806';
+const CACHE = 'graxcare-ready-definitive-original-logo-20260806';
 const APP_SHELL = [
   './',
   './index.html',
@@ -7,6 +7,14 @@ const APP_SHELL = [
   './commercial-theme.css?r=commercial-20260806',
   './commercial-sprite.css?r=commercial-20260806',
   './commercial-icons.css?r=commercial-20260806',
+  './commercial-logo.css?r=original-logo-20260806',
+  './commercial-logo.js?r=original-logo-20260806',
+  './logo-data/logo-part-01.txt',
+  './logo-data/logo-part-02.txt',
+  './logo-data/logo-part-03.txt',
+  './logo-data/logo-part-04.txt',
+  './logo-data/logo-part-05.txt',
+  './logo-data/logo-part-06.txt',
   './update-shell.js?r=scrollfix-20260805',
   '../styles.css?r=scrollfix-20260805',
   '../visual-final.css?r=scrollfix-20260805',
