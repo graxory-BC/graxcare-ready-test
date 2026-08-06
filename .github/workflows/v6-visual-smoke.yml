@@ -1,0 +1,149 @@
+name: V6 Visual Smoke
+
+on:
+  pull_request:
+    paths:
+      - 'v6/**'
+      - 'app.js'
+      - '.github/workflows/v6-visual-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install browser
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start local V6 server
+        run: |
+          python3 -m http.server 4173 --directory . >/tmp/graxcare-server.log 2>&1 &
+          for i in {1..20}; do
+            curl -fsS http://127.0.0.1:4173/v6/ >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/graxcare-server.log
+          exit 1
+
+      - name: Validate premium UI in Chromium
+        run: |
+          mkdir -p visual-artifacts
+          node <<'NODE'
+          const { chromium } = require('playwright');
+          const assert = require('node:assert/strict');
+
+          async function inspect(page, name) {
+            await page.goto('http://127.0.0.1:4173/v6/?ci=premium-direct-20260806f', {
+              waitUntil: 'domcontentloaded'
+            });
+            await page.waitForSelector('#situationsGrid .situation-card');
+            await page.waitForTimeout(800);
+
+            const result = await page.evaluate(() => {
+              const card = document.querySelector('#situationsGrid .situation-card');
+              const icon = card?.querySelector('.situation-icon');
+              const grid = document.querySelector('#situationsGrid');
+              const cardStyle = card ? getComputedStyle(card) : null;
+              const iconStyle = icon ? getComputedStyle(icon) : null;
+              const artStyle = icon ? getComputedStyle(icon, '::before') : null;
+              const linkedStyles = [...document.querySelectorAll('link[rel="stylesheet"]')]
+                .map(link => link.getAttribute('href'));
+
+              return {
+                cardCount: document.querySelectorAll('#situationsGrid .situation-card').length,
+                navCount: document.querySelectorAll('.bottom-nav .nav-button').length,
+                premiumLink: linkedStyles.some(href => href && href.includes('premium-icon-art.css')),
+                display: cardStyle?.display,
+                columns: getComputedStyle(grid).gridTemplateColumns,
+                cardColumns: cardStyle?.gridTemplateColumns,
+                cardMinHeight: parseFloat(cardStyle?.minHeight || '0'),
+                borderTopWidth: parseFloat(cardStyle?.borderTopWidth || '0'),
+                borderTopColor: cardStyle?.borderTopColor,
+                iconWidth: parseFloat(iconStyle?.width || '0'),
+                iconHeight: parseFloat(iconStyle?.height || '0'),
+                artBackground: artStyle?.backgroundImage,
+                artMask: artStyle?.maskImage || artStyle?.webkitMaskImage,
+                labelSize: parseFloat(getComputedStyle(card.querySelector('strong')).fontSize || '0'),
+                overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth
+              };
+            });
+
+            assert.equal(result.cardCount, 12, `${name}: expected 12 situation cards`);
+            assert.equal(result.navCount, 4, `${name}: expected 4 navigation items`);
+            assert.equal(result.premiumLink, true, `${name}: premium stylesheet must be linked directly`);
+            assert.equal(result.display, 'grid', `${name}: premium cards must use grid layout`);
+            assert.ok(result.cardMinHeight >= 100, `${name}: cards are too short (${result.cardMinHeight}px)`);
+            assert.ok(result.borderTopWidth >= 5, `${name}: premium color band is missing`);
+            assert.ok(result.iconWidth >= 50 && result.iconHeight >= 50, `${name}: icon container is too small`);
+            assert.ok(result.artBackground && result.artBackground.includes('data:image/svg+xml'), `${name}: custom SVG art is not active`);
+            assert.ok(!result.artMask || result.artMask === 'none', `${name}: obsolete sprite mask is still active`);
+            assert.ok(result.labelSize >= 12.5, `${name}: labels are too small (${result.labelSize}px)`);
+            assert.ok(result.overflowX <= 1, `${name}: horizontal overflow detected (${result.overflowX}px)`);
+
+            await page.screenshot({
+              path: `visual-artifacts/v6-${name}.png`,
+              fullPage: true
+            });
+
+            console.log(name, JSON.stringify(result, null, 2));
+          }
+
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            try {
+              const mobile = await browser.newContext({
+                viewport: { width: 390, height: 844 },
+                deviceScaleFactor: 1,
+                serviceWorkers: 'allow'
+              });
+              const mobilePage = await mobile.newPage();
+              await inspect(mobilePage, 'mobile-390');
+              await mobilePage.reload({ waitUntil: 'domcontentloaded' });
+              await inspect(mobilePage, 'mobile-390-reload');
+              await mobile.close();
+
+              const desktop = await browser.newContext({
+                viewport: { width: 1440, height: 1200 },
+                deviceScaleFactor: 1,
+                serviceWorkers: 'allow'
+              });
+              const desktopPage = await desktop.newPage();
+              await inspect(desktopPage, 'desktop-1440');
+              await desktop.close();
+            } finally {
+              await browser.close();
+            }
+          })().catch(error => {
+            console.error(error);
+            process.exit(1);
+          });
+          NODE
+
+      - name: Verify cache and protected logic
+        run: |
+          grep -q "premium-icon-art.css?r=premium-direct-20260806f" v6/index.html
+          grep -q "graxcare-ready-premium-direct-20260806f" v6/service-worker.js
+          grep -q "const STORAGE_KEY = 'graxcare_ready_state_v1';" app.js
+
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: graxcare-v6-visual-smoke
+          path: visual-artifacts/
+          if-no-files-found: warn
