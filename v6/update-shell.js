@@ -1,10 +1,20 @@
 (() => {
   'use strict';
 
-  /*
-    The functional app already owns the service-worker registration.
-    This file intentionally performs no second registration and no forced reload.
-    Keeping a single owner prevents alternating workers, controller-change loops,
-    blinking, and unstable layout refreshes on Android.
-  */
+  const refreshKey = 'gcr-visual-lock-20260806d';
+  if (!('serviceWorker' in navigator)) return;
+
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloading || sessionStorage.getItem(refreshKey)) return;
+    sessionStorage.setItem(refreshKey, '1');
+    reloading = true;
+    window.location.reload();
+  });
+
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.ready
+      .then(registration => registration.update())
+      .catch(() => {});
+  }, { once: true });
 })();
