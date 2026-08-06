@@ -1,4 +1,4 @@
-const CACHE = 'graxcare-ready-definitive-20260805';
+const CACHE = 'graxcare-ready-definitive-stable-20260805';
 const APP_SHELL = [
   './',
   './index.html',
@@ -13,22 +13,26 @@ const APP_SHELL = [
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
+  event.waitUntil(
+    caches.open(CACHE)
+      .then(cache => cache.addAll(APP_SHELL))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key))))
+      .then(keys => Promise.all(
+        keys
+          .filter(key => key.startsWith('graxcare-ready-') && key !== CACHE)
+          .map(key => caches.delete(key))
+      ))
       .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('message', event => {
-  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
-});
-
-async function networkFirst(request, fallback) {
+async function networkFirst(request, fallbackUrl = null) {
   try {
     const response = await fetch(request, { cache: 'no-store' });
     if (response.ok) {
@@ -37,13 +41,20 @@ async function networkFirst(request, fallback) {
     }
     return response;
   } catch {
-    return (await caches.match(request)) || (fallback ? await caches.match(fallback) : undefined) || Response.error();
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    if (fallbackUrl) {
+      const fallback = await caches.match(fallbackUrl);
+      if (fallback) return fallback;
+    }
+    return Response.error();
   }
 }
 
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
+
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
@@ -51,12 +62,17 @@ self.addEventListener('fetch', event => {
     event.respondWith(networkFirst(request, './index.html'));
     return;
   }
-  if (['style','script','manifest'].includes(request.destination)) {
-    event.respondWith(networkFirst(request));
-    return;
-  }
-  event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(response => {
-    if (response.ok) caches.open(CACHE).then(cache => cache.put(request, response.clone()));
-    return response;
-  })));
+
+  event.respondWith(
+    caches.match(request).then(cached => {
+      if (cached) return cached;
+      return fetch(request).then(response => {
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE).then(cache => cache.put(request, copy));
+        }
+        return response;
+      });
+    })
+  );
 });
