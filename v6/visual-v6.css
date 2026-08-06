@@ -25,10 +25,17 @@ html.phone-ui #situationsGrid .situation-card{display:grid!important;grid-templa
 html.phone-ui #situationsGrid .situation-icon{width:36px!important;height:36px!important;flex:0 0 36px!important;border-radius:10px!important;font-size:16px!important}
 html.phone-ui #situationsGrid .situation-card strong{font-size:12px!important;line-height:1.24!important;font-weight:800!important;text-align:left!important}
 html.phone-ui .profiles-grid{grid-template-columns:1fr!important}
-html.phone-ui .bottom-nav{position:fixed!important;left:50%!important;right:auto!important;top:auto!important;bottom:7px!important;transform:translateX(-50%)!important;width:calc(100% - 14px)!important;max-height:none!important;grid-template-columns:repeat(4,1fr)!important;padding:7px!important}
+html.phone-ui .bottom-nav{position:fixed!important;left:50%!important;right:auto!important;top:auto!important;bottom:max(7px,env(safe-area-inset-bottom))!important;transform:translate3d(-50%,0,0)!important;width:calc(100% - 14px)!important;max-height:none!important;grid-template-columns:repeat(4,1fr)!important;padding:7px!important;background:#061b3a!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;backface-visibility:hidden!important}
 html.phone-ui .nav-button{min-height:54px!important;flex-direction:column!important;justify-content:center!important;padding:4px!important;font-size:10px!important}
 html.phone-ui .action-layout,html.phone-ui .two-column,html.phone-ui .help-grid{grid-template-columns:1fr!important}
 html.phone-ui .summary-row{grid-template-columns:1fr!important;gap:3px!important}
+
+/* Android rendering stability: remove effects that can trigger repeated GPU repainting. */
+html.phone-ui .app-header{position:relative!important;background:#fff!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:0 1px 0 rgba(6,27,58,.08)!important}
+html.phone-ui .view,html.phone-ui .situation-card,html.phone-ui .profile-card,html.phone-ui .button,html.phone-ui .bottom-nav{animation:none!important;transition:none!important}
+html.phone-ui body{background:#f3f6fa!important;overscroll-behavior-y:none!important}
+html.phone-ui .hero-card,html.phone-ui .action-hero{background-color:#061b3a!important}
+html.phone-ui *{-webkit-tap-highlight-color:transparent}
 
 @media(max-width:719px){
   .app-shell{padding-bottom:calc(140px + env(safe-area-inset-bottom))!important}
@@ -51,4 +58,8 @@ html.phone-ui .summary-row{grid-template-columns:1fr!important;gap:3px!important
   #homeView .hero-card{grid-column:1/-1!important}
   #situationsGrid.situations-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
   .panel{min-width:0!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 }
