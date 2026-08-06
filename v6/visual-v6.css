@@ -25,19 +25,28 @@ html.phone-ui #situationsGrid .situation-card{display:grid!important;grid-templa
 html.phone-ui #situationsGrid .situation-icon{width:36px!important;height:36px!important;flex:0 0 36px!important;border-radius:10px!important;font-size:16px!important}
 html.phone-ui #situationsGrid .situation-card strong{font-size:12px!important;line-height:1.24!important;font-weight:800!important;text-align:left!important}
 html.phone-ui .profiles-grid{grid-template-columns:1fr!important}
-html.phone-ui .bottom-nav{position:fixed!important;left:50%!important;right:auto!important;top:auto!important;bottom:max(7px,env(safe-area-inset-bottom))!important;transform:translate3d(-50%,0,0)!important;width:calc(100% - 14px)!important;max-height:none!important;grid-template-columns:repeat(4,1fr)!important;padding:7px!important;background:#061b3a!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;backface-visibility:hidden!important}
+html.phone-ui .bottom-nav{position:fixed!important;left:50%!important;right:auto!important;top:auto!important;bottom:max(7px,env(safe-area-inset-bottom))!important;transform:translate3d(-50%,0,0)!important;width:calc(100% - 14px)!important;max-height:none!important;grid-template-columns:repeat(4,1fr)!important;padding:7px!important;background:#061b3a!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;backface-visibility:hidden!important;touch-action:manipulation!important}
 html.phone-ui .nav-button{min-height:54px!important;flex-direction:column!important;justify-content:center!important;padding:4px!important;font-size:10px!important}
 html.phone-ui .action-layout,html.phone-ui .two-column,html.phone-ui .help-grid{grid-template-columns:1fr!important}
 html.phone-ui .summary-row{grid-template-columns:1fr!important;gap:3px!important}
 
+/* Android scroll ownership: only the root document scrolls. */
+html.phone-ui{height:auto!important;min-height:100%!important;overflow-x:clip!important;overflow-y:auto!important;overscroll-behavior-y:auto!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important;scroll-behavior:auto!important}
+html.phone-ui body{position:static!important;height:auto!important;min-height:100dvh!important;overflow:visible!important;overscroll-behavior-y:auto!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important}
+html.phone-ui main,html.phone-ui .app-shell,html.phone-ui .view,html.phone-ui #homeView,html.phone-ui #actionView,html.phone-ui #followupView,html.phone-ui #backupView,html.phone-ui #helpView{position:relative!important;height:auto!important;min-height:0!important;overflow:visible!important;touch-action:pan-y!important}
+html.phone-ui .app-shell{min-height:calc(100dvh - 66px)!important}
+
 /* Android rendering stability: remove effects that can trigger repeated GPU repainting. */
 html.phone-ui .app-header{position:relative!important;background:#fff!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:0 1px 0 rgba(6,27,58,.08)!important}
 html.phone-ui .view,html.phone-ui .situation-card,html.phone-ui .profile-card,html.phone-ui .button,html.phone-ui .bottom-nav{animation:none!important;transition:none!important}
-html.phone-ui body{background:#f3f6fa!important;overscroll-behavior-y:none!important}
+html.phone-ui body{background:#f3f6fa!important}
 html.phone-ui .hero-card,html.phone-ui .action-hero{background-color:#061b3a!important}
 html.phone-ui *{-webkit-tap-highlight-color:transparent}
 
 @media(max-width:719px){
+  html{height:auto!important;min-height:100%!important;overflow-x:clip!important;overflow-y:auto!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important}
+  body{height:auto!important;min-height:100dvh!important;overflow:visible!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important}
+  .app-shell,.view,#homeView{height:auto!important;overflow:visible!important;touch-action:pan-y!important}
   .app-shell{padding-bottom:calc(140px + env(safe-area-inset-bottom))!important}
   #situationsGrid.situations-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
   #situationsGrid .situation-card{display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;align-items:center!important;min-height:92px!important;padding:12px 10px!important;gap:9px!important}
