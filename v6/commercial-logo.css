@@ -1,0 +1,18 @@
+/* Original approved GraxCare Ready logo — visual integration only. */
+.brand-logo-master{display:block;width:70px;height:60px;object-fit:contain;object-position:left center;flex:0 0 auto}
+html.gcr-logo-ready .brand{min-height:60px;padding:0;gap:0}
+html.gcr-logo-ready .brand-copy{display:none!important}
+@media(max-width:719px){
+  .brand-logo-master{width:58px;height:50px}
+  html.gcr-logo-ready .brand{min-height:50px}
+}
+@media(min-width:1100px){
+  html.gcr-logo-ready .app-header .brand{display:none!important}
+  html.gcr-logo-ready .app-header{justify-content:flex-end!important}
+  html.gcr-logo-ready .bottom-nav{padding-top:132px!important}
+  html.gcr-logo-ready .bottom-nav:before{
+    content:""!important;top:14px!important;left:16px!important;right:16px!important;height:106px!important;
+    background-image:var(--gcr-logo-image)!important;background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important;
+  }
+}
+@media print{.brand-logo-master{display:none!important}}
