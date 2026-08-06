@@ -1,16 +1,16 @@
-/* GraxCare Ready V6 — stable responsive shell plus commercial presentation modules. */
-@import url("./commercial-theme.css?r=commercial-20260806");
-@import url("./commercial-sprite.css?r=commercial-20260806");
-@import url("./commercial-icons.css?r=commercial-20260806");
+/* GraxCare Ready V6 — stable responsive shell and locked premium presentation. */
+@import url("./commercial-theme.css?r=visual-lock-20260806d");
+@import url("./commercial-sprite.css?r=visual-lock-20260806d");
+@import url("./commercial-icons.css?r=visual-lock-20260806d");
 
-/* Physical-phone path: preserve the validated Android layout and scroll ownership. */
+/* Physical-phone path: preserve validated Android scrolling and navigation. */
 html.phone-ui .app-header{min-height:66px!important;padding:8px 12px!important}
 html.phone-ui .app-header .brand{display:flex!important;align-items:center!important;gap:9px!important;min-width:0!important}
 html.phone-ui .app-header .brand-copy{display:flex!important;visibility:visible!important;opacity:1!important;font-size:14px!important;line-height:1.02!important}
 html.phone-ui .brand-placeholder{width:40px!important;height:40px!important;flex:0 0 40px!important}
 html.phone-ui .status-pill{display:none!important}
 html.phone-ui .header-actions{margin-left:auto!important}
-html.phone-ui .app-shell{width:100%!important;max-width:none!important;padding:12px 10px calc(140px + env(safe-area-inset-bottom))!important}
+html.phone-ui .app-shell{width:100%!important;max-width:none!important;padding:12px 10px calc(154px + env(safe-area-inset-bottom))!important}
 html.phone-ui #homeView{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
 html.phone-ui #homeView .hero-card{grid-column:auto!important}
 html.phone-ui .hero-card{min-height:178px!important;padding:20px 17px!important;border-radius:22px!important}
@@ -18,14 +18,10 @@ html.phone-ui .hero-card h1{font-size:clamp(27px,8.4vw,35px)!important;line-heig
 html.phone-ui .panel{width:100%!important;padding:14px!important;border-radius:18px!important}
 html.phone-ui .section-heading,html.phone-ui .page-heading{display:flex!important;flex-direction:column!important;gap:10px!important}
 html.phone-ui .selection-hint{align-self:flex-start!important}
-html.phone-ui #situationsGrid.situations-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;margin-top:12px!important}
-html.phone-ui #situationsGrid .situation-card{display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;align-items:center!important;justify-content:start!important;min-height:92px!important;padding:12px 10px!important;border-radius:14px!important;gap:9px!important}
-html.phone-ui #situationsGrid .situation-icon{width:36px!important;height:36px!important;flex:0 0 36px!important;border-radius:10px!important}
-html.phone-ui #situationsGrid .situation-icon::before{width:20px;height:20px}
-html.phone-ui #situationsGrid .situation-card strong{font-size:12px!important;line-height:1.24!important;font-weight:820!important;text-align:left!important}
+html.phone-ui #situationsGrid.situations-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important;margin-top:12px!important}
 html.phone-ui .profiles-grid{grid-template-columns:1fr!important}
 html.phone-ui .bottom-nav{position:fixed!important;left:50%!important;right:auto!important;top:auto!important;bottom:max(7px,env(safe-area-inset-bottom))!important;transform:translate3d(-50%,0,0)!important;width:calc(100% - 14px)!important;max-height:none!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;padding:7px!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;backface-visibility:hidden!important;touch-action:manipulation!important}
-html.phone-ui .nav-button{min-width:0!important;min-height:54px!important;flex-direction:column!important;justify-content:center!important;padding:4px!important;font-size:10px!important}
+html.phone-ui .nav-button{min-width:0!important;min-height:58px!important;flex-direction:column!important;justify-content:center!important;padding:4px!important;font-size:10px!important}
 html.phone-ui .action-layout,html.phone-ui .two-column,html.phone-ui .help-grid{grid-template-columns:1fr!important}
 html.phone-ui .summary-row{grid-template-columns:1fr!important;gap:3px!important}
 html.phone-ui{height:auto!important;min-height:100%!important;overflow-x:clip!important;overflow-y:auto!important;overscroll-behavior-y:auto!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important;scroll-behavior:auto!important}
@@ -43,10 +39,8 @@ html.phone-ui *{-webkit-tap-highlight-color:transparent}
   body{height:auto!important;min-height:100dvh!important;overflow:visible!important;touch-action:pan-y!important;-webkit-overflow-scrolling:touch!important}
   .app-shell,.view,#homeView{height:auto!important;overflow:visible!important;touch-action:pan-y!important}
   #homeView{grid-template-columns:minmax(0,1fr)!important}
-  .app-shell{padding-bottom:calc(140px + env(safe-area-inset-bottom))!important}
-  #situationsGrid.situations-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
-  #situationsGrid .situation-card{display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;align-items:center!important;min-height:92px!important;padding:12px 10px!important;gap:9px!important}
-  #situationsGrid .situation-card strong{font-size:12px!important;line-height:1.24!important}
+  .app-shell{padding-bottom:calc(154px + env(safe-area-inset-bottom))!important}
+  #situationsGrid.situations-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px!important}
   .brand-copy{display:flex!important;visibility:visible!important;opacity:1!important}
   .bottom-nav{grid-template-columns:repeat(4,minmax(0,1fr))!important}
   .nav-button{min-width:0!important}
@@ -57,7 +51,6 @@ html.phone-ui *{-webkit-tap-highlight-color:transparent}
   #homeView{display:grid!important;grid-template-columns:minmax(230px,.8fr) minmax(0,1.35fr)!important;gap:18px!important}
   #homeView .hero-card{grid-column:1/-1!important}
   #situationsGrid.situations-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
-  #situationsGrid .situation-card strong{font-size:12px!important;line-height:1.22!important}
 }
 
 @media(min-width:1100px){
@@ -67,6 +60,69 @@ html.phone-ui *{-webkit-tap-highlight-color:transparent}
   #situationsGrid.situations-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
   .panel{min-width:0!important}
   .bottom-nav:before{font-family:Georgia,"Times New Roman",serif!important;letter-spacing:-.02em!important}
+}
+
+/* LOCKED PREMIUM CARD SYSTEM — intentionally last and highly specific. */
+html body #situationsGrid .situation-card{
+  --card-accent:#109b92;--card-icon:#087c76;--card-soft:#e5f7f4;--card-border:#c8e7e2;
+  position:relative!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:flex-start!important;
+  min-width:0!important;min-height:132px!important;padding:13px 12px 12px!important;gap:10px!important;overflow:hidden!important;
+  border:1px solid var(--card-border)!important;border-top:4px solid var(--card-accent)!important;border-radius:19px!important;
+  background:linear-gradient(155deg,#ffffff 0%,#fbfdfe 58%,var(--card-soft) 160%)!important;
+  box-shadow:0 9px 22px rgba(13,27,61,.10),inset 0 1px 0 #fff!important;text-align:left!important;
+}
+html body #situationsGrid .situation-card::after{
+  content:""!important;position:absolute!important;top:12px!important;right:12px!important;width:7px!important;height:7px!important;
+  border-radius:999px!important;background:#c89527!important;box-shadow:0 0 0 4px rgba(200,149,39,.11)!important;pointer-events:none!important;
+}
+html body #situationsGrid .situation-card[data-situation-id="cant-reach"],
+html body #situationsGrid .situation-card[data-situation-id="urgent-care"],
+html body #situationsGrid .situation-card[data-situation-id="suspicious-message"],
+html body #situationsGrid .situation-card.urgent{
+  --card-accent:#c43b30;--card-icon:#b42318;--card-soft:#fff0ee;--card-border:#f0c4bf;
+}
+html body #situationsGrid .situation-card[data-situation-id="cant-reach"]::after,
+html body #situationsGrid .situation-card[data-situation-id="urgent-care"]::after,
+html body #situationsGrid .situation-card[data-situation-id="suspicious-message"]::after,
+html body #situationsGrid .situation-card.urgent::after{background:#c43b30!important;box-shadow:0 0 0 4px rgba(196,59,48,.11)!important}
+html body #situationsGrid .situation-card[data-situation-id="family-help"],
+html body #situationsGrid .situation-card[data-situation-id="caregiver-unavailable"],
+html body #situationsGrid .situation-card[data-situation-id="device-problem"],
+html body #situationsGrid .situation-card[data-situation-id="travel"],
+html body #situationsGrid .situation-card[data-situation-id="update-info"]{
+  --card-accent:#244f82;--card-icon:#153f72;--card-soft:#eaf1fa;--card-border:#ccd9e9;
+}
+html body #situationsGrid .situation-icon{
+  position:relative!important;display:grid!important;place-items:center!important;width:50px!important;height:50px!important;flex:0 0 50px!important;
+  border-radius:15px!important;color:var(--card-icon)!important;background:linear-gradient(145deg,#fff,var(--card-soft))!important;
+  border:1px solid var(--card-border)!important;box-shadow:0 7px 16px rgba(13,27,61,.12),inset 0 1px 0 #fff!important;
+}
+html body #situationsGrid .situation-icon::after{content:""!important;position:absolute!important;inset:4px!important;border:1px solid rgba(255,255,255,.9)!important;border-radius:11px!important;pointer-events:none!important}
+html body #situationsGrid .situation-icon::before{width:29px!important;height:29px!important}
+html body #situationsGrid .situation-card strong{
+  position:relative!important;z-index:1!important;display:block!important;width:100%!important;margin:0!important;color:#0d1b3d!important;
+  font-size:12px!important;line-height:1.22!important;font-weight:880!important;letter-spacing:-.012em!important;text-align:left!important;
+  overflow-wrap:normal!important;word-break:normal!important;
+}
+html body .bottom-nav{
+  min-height:72px!important;border-radius:19px!important;background:linear-gradient(180deg,#0d2147,#06142e)!important;
+  border:1px solid rgba(255,255,255,.11)!important;box-shadow:0 18px 44px rgba(3,18,38,.32)!important;
+}
+html body .bottom-nav .nav-button{border:1px solid transparent!important;border-radius:13px!important;color:#d0dbe7!important;font-weight:820!important}
+html body .bottom-nav .nav-button span{width:32px!important;height:32px!important;border-radius:11px!important;background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.08)!important}
+html body .bottom-nav .nav-button span::before{width:21px!important;height:21px!important}
+html body .bottom-nav .nav-button.active{
+  color:#0d1b3d!important;background:#ffffff!important;border-color:#d7e1ea!important;
+  box-shadow:inset 0 3px 0 #c89527,0 8px 18px rgba(0,0,0,.19)!important;
+}
+html body .bottom-nav .nav-button.active span{color:#087c76!important;background:#e6f6f3!important;border-color:#c7e9e4!important}
+
+@media(max-width:350px){
+  html body #situationsGrid.situations-grid{gap:8px!important}
+  html body #situationsGrid .situation-card{min-height:124px!important;padding:10px 9px!important;gap:8px!important;border-radius:16px!important}
+  html body #situationsGrid .situation-icon{width:44px!important;height:44px!important;flex-basis:44px!important;border-radius:13px!important}
+  html body #situationsGrid .situation-icon::before{width:25px!important;height:25px!important}
+  html body #situationsGrid .situation-card strong{font-size:10.5px!important;line-height:1.18!important}
 }
 
 @media(prefers-reduced-motion:reduce){
