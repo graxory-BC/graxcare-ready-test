@@ -1,0 +1,112 @@
+/* GraxCare Ready V6 — visibly premium presentation layer. */
+.situation-card{
+  --pv-icon:#087c76;--pv-bg1:#f8fffe;--pv-bg2:#dff5f1;--pv-border:#b9e2dc;
+  --pv-accent:#1ea79d;--pv-glow:rgba(30,167,157,.12);--pv-ring:rgba(255,255,255,.92);
+  position:relative!important;overflow:hidden!important;border-radius:18px!important;
+  border:1px solid color-mix(in srgb,var(--pv-accent) 28%,#dce4eb)!important;
+  border-top:4px solid var(--pv-accent)!important;
+  background:radial-gradient(circle at 86% 14%,var(--pv-glow),transparent 34%),
+    linear-gradient(160deg,#fff 0%,#fbfdfe 58%,color-mix(in srgb,var(--pv-bg2) 34%,#fff) 100%)!important;
+  box-shadow:0 8px 22px rgba(13,27,61,.09)!important;
+}
+.situation-card::after{
+  content:"";position:absolute!important;right:11px!important;top:11px!important;width:6px!important;height:6px!important;
+  border-radius:50%!important;background:#c89527!important;box-shadow:0 0 0 4px rgba(200,149,39,.10)!important;
+  pointer-events:none!important;
+}
+.situation-card.urgent::after,
+.situation-card[data-situation-id="cant-reach"]::after,
+.situation-card[data-situation-id="urgent-care"]::after,
+.situation-card[data-situation-id="suspicious-message"]::after{
+  background:#b42318!important;box-shadow:0 0 0 4px rgba(180,35,24,.10)!important;
+}
+.situation-icon{
+  position:relative!important;z-index:1!important;display:grid!important;place-items:center!important;
+  width:54px!important;height:54px!important;flex:0 0 54px!important;border-radius:17px!important;
+  color:var(--pv-icon)!important;font-size:0!important;
+  background:linear-gradient(145deg,var(--pv-bg1),var(--pv-bg2))!important;
+  border:1px solid var(--pv-border)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.98),inset 0 -1px 0 rgba(8,124,118,.05),
+    0 10px 20px rgba(13,27,61,.14)!important;
+}
+.situation-icon::after{
+  content:"";position:absolute!important;inset:5px!important;border-radius:12px!important;
+  border:1px solid var(--pv-ring)!important;pointer-events:none!important;
+}
+.situation-icon::before{
+  width:31px!important;height:31px!important;background:currentColor!important;
+  -webkit-mask-image:var(--gcr-sprite)!important;mask-image:var(--gcr-sprite)!important;
+}
+.situation-card strong{
+  position:relative!important;z-index:1!important;color:#0d1b3d!important;font-weight:880!important;
+  letter-spacing:-.015em!important;
+}
+.situation-card:hover:not(:disabled),.situation-card:focus-visible{
+  transform:translateY(-2px)!important;border-color:var(--pv-accent)!important;
+  box-shadow:0 16px 34px rgba(13,27,61,.15)!important;
+}
+.situation-card[data-situation-id="family-help"],
+.situation-card[data-situation-id="caregiver-unavailable"],
+.situation-card[data-situation-id="device-problem"],
+.situation-card[data-situation-id="travel"],
+.situation-card[data-situation-id="update-info"]{
+  --pv-icon:#173c70;--pv-bg1:#fbfdff;--pv-bg2:#e4edf8;--pv-border:#c8d6e8;
+  --pv-accent:#315f99;--pv-glow:rgba(49,95,153,.11);
+}
+.situation-card.urgent,
+.situation-card[data-situation-id="cant-reach"],
+.situation-card[data-situation-id="urgent-care"],
+.situation-card[data-situation-id="suspicious-message"]{
+  --pv-icon:#b42318;--pv-bg1:#fffafa;--pv-bg2:#fee5e2;--pv-border:#f2bdb7;
+  --pv-accent:#d84b40;--pv-glow:rgba(216,75,64,.11);
+}
+.bottom-nav{
+  min-height:72px!important;padding:7px!important;background:linear-gradient(180deg,#0d2148 0%,#06142d 100%)!important;
+  border:1px solid rgba(255,255,255,.12)!important;border-radius:22px!important;
+  box-shadow:0 20px 48px rgba(3,18,38,.34)!important;
+}
+.nav-button{
+  min-height:58px!important;color:#d3dfec!important;font-weight:850!important;border-radius:16px!important;gap:3px!important;
+}
+.nav-button span{
+  display:grid!important;place-items:center!important;width:34px!important;height:34px!important;border-radius:12px!important;
+  font-size:0!important;color:inherit!important;background:rgba(255,255,255,.07)!important;
+  border:1px solid rgba(255,255,255,.09)!important;
+}
+.nav-button span::before{
+  width:23px!important;height:23px!important;background:currentColor!important;
+  -webkit-mask-image:var(--gcr-sprite)!important;mask-image:var(--gcr-sprite)!important;
+}
+.nav-button.active{
+  color:#fff!important;background:linear-gradient(180deg,#19b4aa 0%,#087c76 100%)!important;
+  border:1px solid rgba(255,255,255,.15)!important;
+  box-shadow:inset 0 3px 0 #d2a743,0 7px 18px rgba(0,0,0,.25)!important;
+}
+.nav-button.active span{
+  color:#087c76!important;background:#fff!important;border-color:#fff!important;
+  box-shadow:0 5px 12px rgba(0,0,0,.18)!important;
+}
+@media(max-width:719px){
+  html body #situationsGrid.situations-grid{gap:11px!important}
+  html body #situationsGrid .situation-card{
+    display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-start!important;
+    min-height:132px!important;padding:15px 9px 12px!important;gap:10px!important;text-align:center!important;
+  }
+  html body #situationsGrid .situation-icon{
+    width:52px!important;height:52px!important;flex:0 0 52px!important;border-radius:16px!important;
+  }
+  html body #situationsGrid .situation-icon::before{width:30px!important;height:30px!important}
+  html body #situationsGrid .situation-card strong{
+    font-size:11.5px!important;line-height:1.18!important;text-align:center!important;max-width:100%!important;
+  }
+  html body .bottom-nav{min-height:74px!important}
+  html body .nav-button{min-height:60px!important;font-size:10px!important}
+}
+@media(max-width:350px){
+  html body #situationsGrid .situation-card{min-height:126px!important;padding:13px 7px 10px!important;gap:8px!important}
+  html body #situationsGrid .situation-icon{
+    width:46px!important;height:46px!important;flex:0 0 46px!important;border-radius:14px!important;
+  }
+  html body #situationsGrid .situation-icon::before{width:27px!important;height:27px!important}
+  html body #situationsGrid .situation-card strong{font-size:10.5px!important;line-height:1.16!important}
+}
