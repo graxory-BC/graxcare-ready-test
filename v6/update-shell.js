@@ -1,9 +1,7 @@
 (() => {
   'use strict';
-
-  const refreshKey = 'gcr-premium-reset-20260806g';
+  const refreshKey = 'gcr-premium-inline-20260807h';
   if (!('serviceWorker' in navigator)) return;
-
   let reloading = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (reloading || sessionStorage.getItem(refreshKey)) return;
@@ -11,7 +9,6 @@
     reloading = true;
     window.location.reload();
   });
-
   window.addEventListener('load', async () => {
     try {
       const registration = await navigator.serviceWorker.ready;

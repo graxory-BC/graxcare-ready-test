@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+<defs>
+ <filter id="s" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0D1B3D" flood-opacity=".18"/></filter>
+</defs>
+<!-- 1 can't reach: red phone + alert -->
+<g transform="translate(0 0)" filter="url(#s)"><path fill="#D92D20" d="M15 9c3-2 7-1 9 2l5 8c1 2 1 5-1 7l-4 3c4 8 9 13 17 17l3-4c2-2 5-2 7-1l8 5c3 2 4 6 2 9l-3 3c-3 3-7 4-11 3C28 57 7 36 4 17c-1-4 1-7 4-10z"/><circle cx="49" cy="16" r="10" fill="#fff"/><path stroke="#D92D20" stroke-width="4" stroke-linecap="round" d="M45 12l8 8m0-8-8 8"/></g>
+<!-- 2 urgent care: siren -->
+<g transform="translate(64 0)" filter="url(#s)"><path fill="#E10600" d="M15 49V28c0-10 8-18 17-18s17 8 17 18v21z"/><path fill="#fff" d="M28 19h8v8h8v8h-8v8h-8v-8h-8v-8h8z"/><path fill="#102A56" d="M9 49h46v7H9z"/><path stroke="#E10600" stroke-width="3" stroke-linecap="round" d="M32 5V1M12 13L7 8m45 5 5-5M6 30H1m62 0h-5"/></g>
+<!-- 3 hospital: ambulance -->
+<g transform="translate(128 0)" filter="url(#s)"><path fill="#C5161D" d="M5 21a5 5 0 0 1 5-5h31a5 5 0 0 1 5 5v5h7l7 10v14H5z"/><path fill="#fff" d="M20 24h7v7h7v7h-7v7h-7v-7h-7v-7h7z"/><path fill="#fff" d="M47 31h6l4 6H47z"/><circle cx="18" cy="50" r="7" fill="#102A56"/><circle cx="48" cy="50" r="7" fill="#102A56"/><circle cx="18" cy="50" r="3" fill="#fff"/><circle cx="48" cy="50" r="3" fill="#fff"/></g>
+<!-- 4 back home -->
+<g transform="translate(192 0)" filter="url(#s)"><path fill="#087C76" d="M5 30 29 8a4 4 0 0 1 6 0l24 22-6 7-3-3v22H14V34l-3 3z"/><path fill="#fff" d="M32 48 21 38c-7-7 3-16 10-9l1 2 2-2c7-7 17 2 10 9z"/></g>
+<!-- 5 medication changed -->
+<g transform="translate(0 64)" filter="url(#s)"><rect x="13" y="9" width="30" height="9" rx="3" fill="#0E5F66"/><rect x="10" y="17" width="36" height="40" rx="8" fill="#0B9187"/><rect x="16" y="25" width="24" height="24" rx="5" fill="#fff"/><g transform="rotate(-38 28 37)"><rect x="20" y="31" width="26" height="12" rx="6" fill="#0B9187"/><path fill="#FFB547" d="M33 31h7a6 6 0 0 1 0 12h-7z"/></g><path stroke="#fff" stroke-width="3" stroke-linecap="round" d="M20 29h12"/></g>
+<!-- 6 family help -->
+<g transform="translate(64 64)" filter="url(#s)"><circle cx="24" cy="22" r="9" fill="#2563EB"/><circle cx="43" cy="24" r="8" fill="#60A5FA"/><path fill="#2563EB" d="M8 50c1-10 8-16 16-16s15 6 16 16v6H8z"/><path fill="#60A5FA" d="M35 52c1-8 6-13 12-13s11 5 12 13v4H35z"/><path fill="#fff" d="M29 38h6v6h6v6h-6v6h-6v-6h-6v-6h6z"/></g>
+<!-- 7 caregiver unavailable -->
+<g transform="translate(128 64)" filter="url(#s)"><circle cx="25" cy="21" r="9" fill="#64748B"/><path fill="#64748B" d="M9 50c1-10 8-16 16-16s15 6 16 16v6H9z"/><circle cx="47" cy="42" r="12" fill="#E2E8F0"/><path stroke="#475569" stroke-width="4" stroke-linecap="round" d="M40 35l14 14m0-14L40 49"/></g>
+<!-- 8 suspicious call -->
+<g transform="translate(192 64)" filter="url(#s)"><path fill="#F97316" d="M13 11h30a7 7 0 0 1 7 7v26a7 7 0 0 1-7 7H28l-10 8v-8h-5a7 7 0 0 1-7-7V18a7 7 0 0 1 7-7z"/><path fill="#fff" d="M26 18h8l-1 18h-6z"/><circle cx="30" cy="43" r="4" fill="#fff"/><path stroke="#9A3412" stroke-width="3" stroke-linecap="round" d="M46 10l5-5m-3 12 7-1"/></g>
+<!-- 9 device problem -->
+<g transform="translate(0 128)" filter="url(#s)"><rect x="16" y="6" width="32" height="52" rx="8" fill="#F59E0B"/><rect x="20" y="12" width="24" height="34" rx="3" fill="#fff"/><circle cx="32" cy="52" r="3" fill="#fff"/><path stroke="#B45309" stroke-width="4" stroke-linecap="round" d="M10 18l6 6m38-6-6 6M8 33h7m34 0h7"/><path fill="#F59E0B" d="M28 19h8l-1 13h-6z"/><circle cx="32" cy="38" r="3" fill="#F59E0B"/></g>
+<!-- 10 travel -->
+<g transform="translate(64 128)" filter="url(#s)"><path fill="#38BDF8" d="m6 35 22-7 8-20c1-3 4-5 7-4s5 4 4 7l-5 18 14 8c3 2 4 5 2 8s-5 4-8 2l-14-7-11 16-5-2 5-18-17 5z"/><path stroke="#0284C7" stroke-width="3" stroke-linecap="round" d="M10 50h12"/></g>
+<!-- 11 appointment -->
+<g transform="translate(128 128)" filter="url(#s)"><rect x="8" y="12" width="48" height="45" rx="8" fill="#16A34A"/><rect x="8" y="19" width="48" height="10" fill="#DCFCE7"/><path stroke="#fff" stroke-width="4" stroke-linecap="round" d="M20 7v10m24-10v10"/><path fill="#fff" d="m22 42 6 6 14-16 5 4-18 21-11-11z"/></g>
+<!-- 12 info update -->
+<g transform="translate(192 128)" filter="url(#s)"><rect x="10" y="8" width="40" height="48" rx="8" fill="#7C3AED"/><path fill="#fff" d="M20 19h20v5H20zm0 10h16v5H20zm0 10h11v5H20z"/><path fill="#C4B5FD" d="m40 37 12-12 6 6-12 12-8 2z"/><path fill="#fff" d="m52 25 3-3 6 6-3 3z"/></g>
+<!-- 13 home nav -->
+<g transform="translate(0 192)" filter="url(#s)"><path fill="#0D1B3D" d="M6 31 29 10a4 4 0 0 1 6 0l23 21-6 7-4-4v22H16V34l-4 4z"/><rect x="27" y="39" width="10" height="17" rx="3" fill="#fff"/></g>
+<!-- 14 follow up nav -->
+<g transform="translate(64 192)" filter="url(#s)"><circle cx="32" cy="32" r="25" fill="#059669"/><path stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="m19 33 9 9 18-21"/></g>
+<!-- 15 backup nav -->
+<g transform="translate(128 192)" filter="url(#s)"><path fill="#7C3AED" d="M10 17a7 7 0 0 1 7-7h30a7 7 0 0 1 7 7v34a7 7 0 0 1-7 7H17a7 7 0 0 1-7-7z"/><path stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M32 18v23m-9-8 9 9 9-9M20 49h24"/></g>
+<!-- 16 help nav -->
+<g transform="translate(192 192)" filter="url(#s)"><circle cx="32" cy="32" r="25" fill="#4F46E5"/><path fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" d="M23 24c1-7 7-11 14-9 6 2 9 8 7 13-2 5-6 6-9 9-2 2-2 4-2 6"/><circle cx="33" cy="50" r="3" fill="#fff"/></g>
+</svg>
