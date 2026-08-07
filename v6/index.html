@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-visual-build="premium-inline-20260807h">
+<html lang="en" data-visual-build="premium-accessibility-20260807i">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -9,12 +9,12 @@
   <script>if(navigator.maxTouchPoints>0&&Math.min(screen.width,screen.height)<=600)document.documentElement.classList.add('phone-ui');</script>
   <style>
     html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}#situationsGrid,.app-shell,.panel,.view{min-width:0;max-width:100%}
-    /* Critical premium art: intentionally inline so stale external CSS cannot restore old icons. */
-    #situationsGrid .situation-card{--a:#087c76;--soft:#ecfaf8;--line:#aee4dd;position:relative!important;display:grid!important;grid-template-columns:1fr!important;grid-template-rows:64px auto!important;place-items:center!important;gap:9px!important;min-height:132px!important;padding:13px 10px 14px!important;border:1px solid var(--line)!important;border-top:6px solid var(--a)!important;border-radius:19px!important;background:linear-gradient(155deg,#fff 0 62%,var(--soft) 100%)!important;box-shadow:0 8px 22px rgba(13,27,61,.11)!important;text-align:center!important;overflow:hidden!important}
+    /* Critical premium art + accessibility sizing. Inline so stale external CSS cannot restore old icons. */
+    #situationsGrid .situation-card{--a:#087c76;--soft:#ecfaf8;--line:#aee4dd;position:relative!important;display:grid!important;grid-template-columns:1fr!important;grid-template-rows:70px auto!important;place-items:center!important;gap:10px!important;min-height:146px!important;padding:14px 10px 16px!important;border:1px solid var(--line)!important;border-top:6px solid var(--a)!important;border-radius:19px!important;background:linear-gradient(155deg,#fff 0 62%,var(--soft) 100%)!important;box-shadow:0 8px 22px rgba(13,27,61,.11)!important;text-align:center!important;overflow:hidden!important}
     #situationsGrid .situation-card::after{content:""!important;position:absolute!important;width:72px!important;height:72px!important;right:-26px!important;bottom:-28px!important;border-radius:50%!important;background:var(--soft)!important;opacity:.72!important;pointer-events:none!important}
-    #situationsGrid .situation-icon{display:block!important;width:60px!important;height:60px!important;border-radius:17px!important;border:1px solid var(--line)!important;background-color:#fff!important;background-image:url('./assets/premium-icons-16.svg?r=premium-inline-20260807h')!important;background-repeat:no-repeat!important;background-size:400% 400%!important;box-shadow:0 7px 16px rgba(13,27,61,.13)!important;color:transparent!important;font-size:0!important;overflow:hidden!important}
+    #situationsGrid .situation-icon{display:block!important;width:66px!important;height:66px!important;border-radius:18px!important;border:1px solid var(--line)!important;background-color:#fff!important;background-image:url('./assets/premium-icons-16.svg?r=premium-accessibility-20260807i')!important;background-repeat:no-repeat!important;background-size:400% 400%!important;box-shadow:0 7px 16px rgba(13,27,61,.14)!important;color:transparent!important;font-size:0!important;overflow:hidden!important}
     #situationsGrid .situation-icon::before,#situationsGrid .situation-icon::after{display:none!important;content:none!important}
-    #situationsGrid .situation-card strong{position:relative!important;z-index:2!important;display:block!important;width:100%!important;color:#0D1B3D!important;font-size:15px!important;line-height:1.18!important;font-weight:800!important;letter-spacing:-.01em!important;text-align:center!important;overflow-wrap:anywhere!important}
+    #situationsGrid .situation-card strong{position:relative!important;z-index:2!important;display:block!important;width:100%!important;color:#0D1B3D!important;font-size:17px!important;line-height:1.20!important;font-weight:800!important;letter-spacing:-.01em!important;text-align:center!important;overflow-wrap:anywhere!important}
     #situationsGrid .situation-card:focus-visible{outline:4px solid color-mix(in srgb,var(--a) 30%,#fff)!important;outline-offset:2px!important}
     #situationsGrid .situation-card[data-situation-id="cant-reach"]{--a:#D92D20;--soft:#FFF1F0;--line:#F6B7B2}#situationsGrid .situation-card[data-situation-id="cant-reach"] .situation-icon{background-position:0% 0%!important}
     #situationsGrid .situation-card[data-situation-id="urgent-care"]{--a:#E10600;--soft:#FFF0F0;--line:#F5AAA8}#situationsGrid .situation-card[data-situation-id="urgent-care"] .situation-icon{background-position:33.333% 0%!important}
@@ -28,19 +28,21 @@
     #situationsGrid .situation-card[data-situation-id="travel"]{--a:#38BDF8;--soft:#F0F9FF;--line:#BAE6FD}#situationsGrid .situation-card[data-situation-id="travel"] .situation-icon{background-position:33.333% 66.667%!important}
     #situationsGrid .situation-card[data-situation-id="appointment"]{--a:#16A34A;--soft:#F0FDF4;--line:#BBF7D0}#situationsGrid .situation-card[data-situation-id="appointment"] .situation-icon{background-position:66.667% 66.667%!important}
     #situationsGrid .situation-card[data-situation-id="update-info"]{--a:#7C3AED;--soft:#F5F3FF;--line:#DDD6FE}#situationsGrid .situation-card[data-situation-id="update-info"] .situation-icon{background-position:100% 66.667%!important}
-    .bottom-nav .nav-button span{display:block!important;width:28px!important;height:28px!important;margin:0 auto 3px!important;background-image:url('./assets/premium-icons-16.svg?r=premium-inline-20260807h')!important;background-repeat:no-repeat!important;background-size:400% 400%!important;color:transparent!important;font-size:0!important}
+    .bottom-nav .nav-button{font-size:12px!important;font-weight:750!important;line-height:1.05!important}
+    .bottom-nav .nav-button span{display:block!important;width:32px!important;height:32px!important;margin:0 auto 4px!important;border-radius:10px!important;background-color:rgba(255,255,255,.13)!important;background-image:url('./assets/premium-icons-16.svg?r=premium-accessibility-20260807i')!important;background-repeat:no-repeat!important;background-size:400% 400%!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15),0 2px 7px rgba(0,0,0,.10)!important;color:transparent!important;font-size:0!important}
+    .bottom-nav .nav-button.active span{background-color:#fff!important;box-shadow:0 2px 8px rgba(0,0,0,.16)!important}
     .bottom-nav .nav-button:nth-child(1) span{background-position:0% 100%!important}.bottom-nav .nav-button:nth-child(2) span{background-position:33.333% 100%!important}.bottom-nav .nav-button:nth-child(3) span{background-position:66.667% 100%!important}.bottom-nav .nav-button:nth-child(4) span{background-position:100% 100%!important}
-    @media(max-width:359px){#situationsGrid .situation-card{min-height:126px!important;padding-inline:8px!important}#situationsGrid .situation-card strong{font-size:14px!important}.bottom-nav .nav-button span{width:25px!important;height:25px!important}}
-    @media(min-width:768px){#situationsGrid .situation-card{min-height:142px!important}#situationsGrid .situation-card strong{font-size:16px!important}}
+    @media(max-width:359px){#situationsGrid .situation-card{grid-template-rows:64px auto!important;min-height:138px!important;padding-inline:8px!important}#situationsGrid .situation-icon{width:60px!important;height:60px!important}#situationsGrid .situation-card strong{font-size:15.5px!important}.bottom-nav .nav-button{font-size:11px!important}.bottom-nav .nav-button span{width:29px!important;height:29px!important;margin-bottom:3px!important}}
+    @media(min-width:768px){#situationsGrid .situation-card{grid-template-rows:72px auto!important;min-height:152px!important}#situationsGrid .situation-icon{width:68px!important;height:68px!important}#situationsGrid .situation-card strong{font-size:17.5px!important}.bottom-nav .nav-button{font-size:12.5px!important}.bottom-nav .nav-button span{width:34px!important;height:34px!important}}
   </style>
-  <link rel="manifest" href="./manifest.webmanifest?r=premium-inline-20260807h">
-  <link rel="stylesheet" href="../styles.css?r=premium-inline-20260807h">
-  <link rel="stylesheet" href="../visual-final.css?r=premium-inline-20260807h">
-  <link rel="stylesheet" href="./visual-v6.css?r=premium-inline-20260807h">
-  <link rel="stylesheet" href="./premium-icon-art.css?r=premium-inline-20260807h">
+  <link rel="manifest" href="./manifest.webmanifest?r=premium-accessibility-20260807i">
+  <link rel="stylesheet" href="../styles.css?r=premium-accessibility-20260807i">
+  <link rel="stylesheet" href="../visual-final.css?r=premium-accessibility-20260807i">
+  <link rel="stylesheet" href="./visual-v6.css?r=premium-accessibility-20260807i">
+  <link rel="stylesheet" href="./premium-icon-art.css?r=premium-accessibility-20260807i">
   <link rel="stylesheet" href="./commercial-logo.css?r=original-logo-20260806">
   <script src="./commercial-logo.js?r=original-logo-20260806" defer></script>
-  <script src="./update-shell.js?r=premium-inline-20260807h" defer></script>
+  <script src="./update-shell.js?r=premium-accessibility-20260807i" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
@@ -61,6 +63,6 @@
   </main>
   <nav class="bottom-nav" aria-label="Primary navigation"><button type="button" data-route="home" class="nav-button active"><span aria-hidden="true">⌂</span>Home</button><button type="button" data-route="followup" class="nav-button"><span aria-hidden="true">✓</span>Follow Up</button><button type="button" data-route="backup" class="nav-button"><span aria-hidden="true">⇩</span>Backup</button><button type="button" data-route="help" class="nav-button"><span aria-hidden="true">?</span>Help</button></nav>
   <div id="modalRoot" class="modal-root" hidden></div><div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="../app.js?r=premium-inline-20260807h" defer></script>
+  <script src="../app.js?r=premium-accessibility-20260807i" defer></script>
 </body>
 </html>
