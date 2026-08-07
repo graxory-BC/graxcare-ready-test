@@ -1,18 +1,18 @@
-const CACHE = 'graxcare-ready-premium-accessibility-20260807i';
+const CACHE = 'graxcare-ready-premium-accessibility-final-20260807j';
 const APP_SHELL = [
   './',
   './index.html',
-  './manifest.webmanifest?r=premium-accessibility-20260807i',
-  './visual-v6.css?r=premium-accessibility-20260807i',
-  './premium-icon-art.css?r=premium-accessibility-20260807i',
+  './manifest.webmanifest?r=premium-accessibility-final-20260807j',
+  './visual-v6.css?r=premium-accessibility-final-20260807j',
+  './premium-icon-art.css?r=premium-accessibility-final-20260807j',
   './commercial-logo.css?r=original-logo-20260806',
   './commercial-logo.js?r=original-logo-20260806',
-  './update-shell.js?r=premium-accessibility-20260807i',
+  './update-shell.js?r=premium-accessibility-final-20260807j',
   './assets/graxcare-logo-master-small.b64.txt',
-  './assets/premium-icons-16.svg?r=premium-accessibility-20260807i',
-  '../styles.css?r=premium-accessibility-20260807i',
-  '../visual-final.css?r=premium-accessibility-20260807i',
-  '../app.js?r=premium-accessibility-20260807i',
+  './assets/premium-icons-16.svg?r=premium-accessibility-final-20260807j',
+  '../styles.css?r=premium-accessibility-final-20260807j',
+  '../visual-final.css?r=premium-accessibility-final-20260807j',
+  '../app.js?r=premium-accessibility-final-20260807j',
   '../assets/placeholder-icon-192.png',
   '../assets/placeholder-icon-512.png'
 ];
