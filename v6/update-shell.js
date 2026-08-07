@@ -1,6 +1,7 @@
 (() => {
   'use strict';
 
+  document.documentElement.dataset.visualBuild = 'premium-balance-20260807k';
   const style = document.createElement('style');
   style.id = 'gcr-premium-balance-k';
   style.textContent = `
