@@ -40,7 +40,7 @@ jobs:
           cat /tmp/graxcare-server.log
           exit 1
 
-      - name: Validate approved V6 in Chromium
+      - name: Validate compact commercial V6 in Chromium
         run: |
           mkdir -p visual-artifacts
           node <<'NODE'
@@ -48,7 +48,7 @@ jobs:
           const assert = require('node:assert/strict');
 
           async function inspect(page, name) {
-            await page.goto('http://127.0.0.1:4173/v6/?ci=approved-sync-20260807l', {
+            await page.goto('http://127.0.0.1:4173/v6/?ci=compact-commercial-20260807m', {
               waitUntil: 'domcontentloaded'
             });
             await page.waitForSelector('#situationsGrid .situation-card');
@@ -65,15 +65,18 @@ jobs:
               const navIconStyle = navIcon ? getComputedStyle(navIcon) : null;
               const navArtStyle = navIcon ? getComputedStyle(navIcon, '::before') : null;
               const manifest = document.querySelector('link[rel="manifest"]')?.getAttribute('href') || '';
+              const favicon = document.querySelector('link[rel="icon"]')?.getAttribute('href') || '';
 
               return {
+                width: innerWidth,
                 build: document.documentElement.dataset.visualBuild || '',
-                approvedStylePresent: !!document.getElementById('gcr-approved-sync-l'),
+                compactStylePresent: !!document.getElementById('gcr-compact-commercial-m'),
                 cardCount: document.querySelectorAll('#situationsGrid .situation-card').length,
                 navCount: document.querySelectorAll('.bottom-nav .nav-button').length,
                 navLabels: [...document.querySelectorAll('.bottom-nav .nav-button')].map(button => button.textContent.trim()),
                 slogan: document.querySelector('.hero-card .eyebrow')?.textContent.trim() || '',
                 manifest,
+                favicon,
                 cardMinHeight: parseFloat(cardStyle?.minHeight || '0'),
                 iconWidth: parseFloat(iconStyle?.width || '0'),
                 iconHeight: parseFloat(iconStyle?.height || '0'),
@@ -89,22 +92,30 @@ jobs:
 
             await page.screenshot({ path: `visual-artifacts/v6-${name}.png`, fullPage: true });
 
-            assert.equal(result.build, 'approved-sync-20260807l', `${name}: approved visual shell is not active`);
-            assert.equal(result.approvedStylePresent, true, `${name}: approved style element is missing`);
+            assert.equal(result.build, 'compact-commercial-20260807m', `${name}: compact commercial visual shell is not active`);
+            assert.equal(result.compactStylePresent, true, `${name}: compact commercial style element is missing`);
             assert.equal(result.cardCount, 12, `${name}: expected 12 situation cards`);
             assert.equal(result.navCount, 4, `${name}: expected 4 navigation items`);
             assert.deepEqual(result.navLabels, ['Home','Follow Up','Backup','Help'], `${name}: navigation labels changed`);
             assert.equal(result.slogan, 'The 60-Second Family Care Action System', `${name}: 60-second positioning changed`);
-            assert.ok(result.manifest.includes('manifest.webmanifest'), `${name}: manifest is missing`);
-            assert.ok(result.cardMinHeight >= 124 && result.cardMinHeight <= 142, `${name}: card height is outside approved range (${result.cardMinHeight}px)`);
-            assert.ok(result.iconWidth >= 44 && result.iconWidth <= 56 && result.iconHeight >= 44 && result.iconHeight <= 56, `${name}: situation icon size is outside approved range (${result.iconWidth}x${result.iconHeight})`);
+            assert.ok(result.manifest.includes('compact-commercial-20260807m'), `${name}: refreshed manifest is missing`);
+            assert.ok(result.favicon.includes('graxcare-app-icon.svg'), `${name}: commercial browser icon is missing`);
             assert.ok(result.artBackground && result.artBackground.includes('data:image/svg+xml'), `${name}: premium situation art is not active`);
-            assert.ok(!result.artMask || result.artMask === 'none', `${name}: situation art unexpectedly uses old mask`);
-            assert.ok(result.labelSize >= 10.5 && result.labelSize <= 14.5, `${name}: label size is outside approved range (${result.labelSize}px)`);
-            assert.ok(result.navIconWidth >= 29 && result.navIconWidth <= 32, `${name}: bottom navigation icon container changed (${result.navIconWidth}px)`);
-            assert.ok(result.navArtMask && result.navArtMask !== 'none', `${name}: approved bottom navigation icon family is not active`);
-            assert.ok(!result.navArtBackground || result.navArtBackground === 'none', `${name}: rejected colored bottom icon art is still active`);
+            assert.ok(!result.artMask || result.artMask === 'none', `${name}: situation art unexpectedly uses an obsolete mask`);
+            assert.ok(result.navArtBackground && result.navArtBackground.includes('data:image/svg+xml'), `${name}: bottom navigation artwork is not visible`);
+            assert.ok(!result.navArtMask || result.navArtMask === 'none', `${name}: bottom navigation unexpectedly uses the broken mask implementation`);
             assert.ok(result.overflowX <= 1, `${name}: horizontal overflow detected (${result.overflowX}px)`);
+
+            if (result.width <= 719) {
+              assert.ok(result.cardMinHeight >= 84 && result.cardMinHeight <= 92, `${name}: compact card height is outside target range (${result.cardMinHeight}px)`);
+              assert.ok(result.iconWidth >= 36 && result.iconWidth <= 42 && result.iconHeight >= 36 && result.iconHeight <= 42, `${name}: compact situation icon size is outside target range (${result.iconWidth}x${result.iconHeight})`);
+              assert.ok(result.labelSize >= 10 && result.labelSize <= 11, `${name}: compact label size is outside target range (${result.labelSize}px)`);
+              assert.ok(result.navIconWidth >= 29 && result.navIconWidth <= 32, `${name}: mobile bottom icon container is outside target range (${result.navIconWidth}px)`);
+            } else {
+              assert.ok(result.cardMinHeight >= 108 && result.cardMinHeight <= 120, `${name}: desktop card height changed unexpectedly (${result.cardMinHeight}px)`);
+              assert.ok(result.iconWidth >= 58 && result.iconWidth <= 62 && result.iconHeight >= 58 && result.iconHeight <= 62, `${name}: desktop situation icon size changed unexpectedly (${result.iconWidth}x${result.iconHeight})`);
+              assert.ok(result.labelSize >= 14 && result.labelSize <= 15, `${name}: desktop label size changed unexpectedly (${result.labelSize}px)`);
+            }
 
             console.log(name, JSON.stringify(result, null, 2));
           }
@@ -132,12 +143,12 @@ jobs:
           });
           NODE
 
-      - name: Verify icon, cache and protected logic
+      - name: Verify commercial icon, cache and protected logic
         run: |
-          grep -q "approved-sync-20260807l" v6/update-shell.js
-          grep -q "graxcare-ready-approved-sync-20260807l" v6/service-worker.js
-          grep -q "graxcare-app-icon.svg" v6/manifest.webmanifest
-          test -s v6/assets/graxcare-app-icon.svg
+          grep -q "compact-commercial-20260807m" v6/update-shell.js
+          grep -q "graxcare-ready-compact-commercial-20260807m" v6/service-worker.js
+          grep -q "graxcare-app-icon.svg?r=commercial-master-20260807m" v6/manifest.webmanifest
+          grep -q "data:image/webp;base64" v6/assets/graxcare-app-icon.svg
           ! grep -q "placeholder-icon" v6/manifest.webmanifest
           grep -q "const STORAGE_KEY = 'graxcare_ready_state_v1';" app.js
           test "$(git hash-object app.js)" = "216ad539cb5daca5c312b522dae79c3f83dae502"
