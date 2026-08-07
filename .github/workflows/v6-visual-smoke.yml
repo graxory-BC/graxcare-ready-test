@@ -73,7 +73,7 @@ jobs:
                 compactStylePresent: !!document.getElementById('gcr-compact-commercial-m'),
                 cardCount: document.querySelectorAll('#situationsGrid .situation-card').length,
                 navCount: document.querySelectorAll('.bottom-nav .nav-button').length,
-                navLabels: [...document.querySelectorAll('.bottom-nav .nav-button')].map(button => button.textContent.trim()),
+                navLabels: [...document.querySelectorAll('.bottom-nav .nav-button')].map(button => button.lastChild?.textContent.trim() || ''),
                 slogan: document.querySelector('.hero-card .eyebrow')?.textContent.trim() || '',
                 manifest,
                 favicon,
