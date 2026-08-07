@@ -1,20 +1,19 @@
-const CACHE = 'graxcare-ready-premium-balance-final-20260807k2';
+const CACHE = 'graxcare-ready-approved-sync-20260807l';
 const APP_SHELL = [
   './',
   './index.html',
-  './manifest.webmanifest?r=premium-accessibility-final-20260807j',
-  './visual-v6.css?r=premium-accessibility-final-20260807j',
-  './premium-icon-art.css?r=premium-accessibility-final-20260807j',
+  './manifest.webmanifest?r=approved-sync-20260807l',
+  './visual-v6.css?r=approved-sync-20260807l',
+  './premium-icon-art.css?r=approved-sync-20260807l',
   './commercial-logo.css?r=original-logo-20260806',
   './commercial-logo.js?r=original-logo-20260806',
-  './update-shell.js?r=premium-accessibility-final-20260807j',
+  './update-shell.js?r=approved-sync-20260807l',
   './assets/graxcare-logo-master-small.b64.txt',
-  './assets/premium-icons-16.svg?r=premium-accessibility-final-20260807j',
-  '../styles.css?r=premium-accessibility-final-20260807j',
-  '../visual-final.css?r=premium-accessibility-final-20260807j',
-  '../app.js?r=premium-accessibility-final-20260807j',
-  '../assets/placeholder-icon-192.png',
-  '../assets/placeholder-icon-512.png'
+  './assets/graxcare-app-icon.svg',
+  './assets/premium-icons-16.svg?r=approved-sync-20260807l',
+  '../styles.css?r=approved-sync-20260807l',
+  '../visual-final.css?r=approved-sync-20260807l',
+  '../app.js?r=approved-sync-20260807l'
 ];
 
 self.addEventListener('install', event => {
