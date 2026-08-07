@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const refreshKey = 'gcr-premium-accessibility-20260807i';
+  const refreshKey = 'gcr-premium-accessibility-final-20260807j';
   if (!('serviceWorker' in navigator)) return;
   let reloading = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
