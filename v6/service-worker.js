@@ -1,17 +1,18 @@
-const CACHE = 'graxcare-ready-premium-reset-20260806g';
+const CACHE = 'graxcare-ready-premium-inline-20260807h';
 const APP_SHELL = [
   './',
   './index.html',
-  './manifest.webmanifest?r=premium-reset-20260806g',
-  './visual-v6.css?r=premium-reset-20260806g',
-  './premium-icon-art.css?r=premium-reset-20260806g',
+  './manifest.webmanifest?r=premium-inline-20260807h',
+  './visual-v6.css?r=premium-inline-20260807h',
+  './premium-icon-art.css?r=premium-inline-20260807h',
   './commercial-logo.css?r=original-logo-20260806',
   './commercial-logo.js?r=original-logo-20260806',
-  './update-shell.js?r=premium-reset-20260806g',
+  './update-shell.js?r=premium-inline-20260807h',
   './assets/graxcare-logo-master-small.b64.txt',
-  '../styles.css?r=premium-reset-20260806g',
-  '../visual-final.css?r=premium-reset-20260806g',
-  '../app.js?r=premium-reset-20260806g',
+  './assets/premium-icons-16.svg?r=premium-inline-20260807h',
+  '../styles.css?r=premium-inline-20260807h',
+  '../visual-final.css?r=premium-inline-20260807h',
+  '../app.js?r=premium-inline-20260807h',
   '../assets/placeholder-icon-192.png',
   '../assets/placeholder-icon-512.png'
 ];
@@ -32,9 +33,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys
-      .filter(key => key.startsWith('graxcare-ready-') && key !== CACHE)
-      .map(key => caches.delete(key)));
+    await Promise.all(keys.filter(key => key.startsWith('graxcare-ready-') && key !== CACHE).map(key => caches.delete(key)));
     await self.clients.claim();
   })());
 });
@@ -63,11 +62,9 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
-
   if (request.mode === 'navigate') {
     event.respondWith(networkFirst(request, './index.html'));
     return;
   }
-
   event.respondWith(networkFirst(request));
 });
