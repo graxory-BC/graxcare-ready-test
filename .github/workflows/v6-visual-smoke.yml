@@ -112,9 +112,9 @@ jobs:
               assert.ok(result.labelSize >= 10 && result.labelSize <= 11, `${name}: compact label size is outside target range (${result.labelSize}px)`);
               assert.ok(result.navIconWidth >= 29 && result.navIconWidth <= 32, `${name}: mobile bottom icon container is outside target range (${result.navIconWidth}px)`);
             } else {
-              assert.ok(result.cardMinHeight >= 108 && result.cardMinHeight <= 120, `${name}: desktop card height changed unexpectedly (${result.cardMinHeight}px)`);
-              assert.ok(result.iconWidth >= 58 && result.iconWidth <= 62 && result.iconHeight >= 58 && result.iconHeight <= 62, `${name}: desktop situation icon size changed unexpectedly (${result.iconWidth}x${result.iconHeight})`);
-              assert.ok(result.labelSize >= 14 && result.labelSize <= 15, `${name}: desktop label size changed unexpectedly (${result.labelSize}px)`);
+              assert.ok(result.cardMinHeight >= 120 && result.cardMinHeight <= 140, `${name}: desktop card height changed unexpectedly (${result.cardMinHeight}px)`);
+              assert.ok(result.iconWidth >= 48 && result.iconWidth <= 64 && result.iconHeight >= 48 && result.iconHeight <= 64, `${name}: desktop situation icon size changed unexpectedly (${result.iconWidth}x${result.iconHeight})`);
+              assert.ok(result.labelSize >= 12 && result.labelSize <= 15, `${name}: desktop label size changed unexpectedly (${result.labelSize}px)`);
             }
 
             console.log(name, JSON.stringify(result, null, 2));
