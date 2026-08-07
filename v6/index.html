@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-visual-build="premium-reset-20260806g">
+<html lang="en" data-visual-build="premium-inline-20260807h">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -7,135 +7,60 @@
   <meta name="description" content="GraxCare Ready — The 60-Second Family Care Action System.">
   <title>GraxCare Ready</title>
   <script>if(navigator.maxTouchPoints>0&&Math.min(screen.width,screen.height)<=600)document.documentElement.classList.add('phone-ui');</script>
-  <style>html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}#situationsGrid,.app-shell,.panel,.view{min-width:0;max-width:100%}</style>
-  <link rel="manifest" href="./manifest.webmanifest?r=premium-reset-20260806g">
-  <link rel="stylesheet" href="../styles.css?r=premium-reset-20260806g">
-  <link rel="stylesheet" href="../visual-final.css?r=premium-reset-20260806g">
-  <link rel="stylesheet" href="./visual-v6.css?r=premium-reset-20260806g">
-  <link rel="preload" href="./premium-icon-art.css?r=premium-reset-20260806g" as="style">
-  <link rel="stylesheet" href="./premium-icon-art.css?r=premium-reset-20260806g">
+  <style>
+    html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}#situationsGrid,.app-shell,.panel,.view{min-width:0;max-width:100%}
+    /* Critical premium art: intentionally inline so stale external CSS cannot restore old icons. */
+    #situationsGrid .situation-card{--a:#087c76;--soft:#ecfaf8;--line:#aee4dd;position:relative!important;display:grid!important;grid-template-columns:1fr!important;grid-template-rows:64px auto!important;place-items:center!important;gap:9px!important;min-height:132px!important;padding:13px 10px 14px!important;border:1px solid var(--line)!important;border-top:6px solid var(--a)!important;border-radius:19px!important;background:linear-gradient(155deg,#fff 0 62%,var(--soft) 100%)!important;box-shadow:0 8px 22px rgba(13,27,61,.11)!important;text-align:center!important;overflow:hidden!important}
+    #situationsGrid .situation-card::after{content:""!important;position:absolute!important;width:72px!important;height:72px!important;right:-26px!important;bottom:-28px!important;border-radius:50%!important;background:var(--soft)!important;opacity:.72!important;pointer-events:none!important}
+    #situationsGrid .situation-icon{display:block!important;width:60px!important;height:60px!important;border-radius:17px!important;border:1px solid var(--line)!important;background-color:#fff!important;background-image:url('./assets/premium-icons-16.svg?r=premium-inline-20260807h')!important;background-repeat:no-repeat!important;background-size:400% 400%!important;box-shadow:0 7px 16px rgba(13,27,61,.13)!important;color:transparent!important;font-size:0!important;overflow:hidden!important}
+    #situationsGrid .situation-icon::before,#situationsGrid .situation-icon::after{display:none!important;content:none!important}
+    #situationsGrid .situation-card strong{position:relative!important;z-index:2!important;display:block!important;width:100%!important;color:#0D1B3D!important;font-size:15px!important;line-height:1.18!important;font-weight:800!important;letter-spacing:-.01em!important;text-align:center!important;overflow-wrap:anywhere!important}
+    #situationsGrid .situation-card:focus-visible{outline:4px solid color-mix(in srgb,var(--a) 30%,#fff)!important;outline-offset:2px!important}
+    #situationsGrid .situation-card[data-situation-id="cant-reach"]{--a:#D92D20;--soft:#FFF1F0;--line:#F6B7B2}#situationsGrid .situation-card[data-situation-id="cant-reach"] .situation-icon{background-position:0% 0%!important}
+    #situationsGrid .situation-card[data-situation-id="urgent-care"]{--a:#E10600;--soft:#FFF0F0;--line:#F5AAA8}#situationsGrid .situation-card[data-situation-id="urgent-care"] .situation-icon{background-position:33.333% 0%!important}
+    #situationsGrid .situation-card[data-situation-id="hospital"]{--a:#C5161D;--soft:#FFF0F1;--line:#F3B2B6}#situationsGrid .situation-card[data-situation-id="hospital"] .situation-icon{background-position:66.667% 0%!important}
+    #situationsGrid .situation-card[data-situation-id="back-home"]{--a:#087C76;--soft:#ECFAF8;--line:#AEE4DD}#situationsGrid .situation-card[data-situation-id="back-home"] .situation-icon{background-position:100% 0%!important}
+    #situationsGrid .situation-card[data-situation-id="medication-change"]{--a:#0B9187;--soft:#ECFAF8;--line:#AEE4DD}#situationsGrid .situation-card[data-situation-id="medication-change"] .situation-icon{background-position:0% 33.333%!important}
+    #situationsGrid .situation-card[data-situation-id="family-help"]{--a:#2563EB;--soft:#EFF6FF;--line:#BFDBFE}#situationsGrid .situation-card[data-situation-id="family-help"] .situation-icon{background-position:33.333% 33.333%!important}
+    #situationsGrid .situation-card[data-situation-id="caregiver-unavailable"]{--a:#64748B;--soft:#F1F5F9;--line:#CBD5E1}#situationsGrid .situation-card[data-situation-id="caregiver-unavailable"] .situation-icon{background-position:66.667% 33.333%!important}
+    #situationsGrid .situation-card[data-situation-id="suspicious-message"]{--a:#F97316;--soft:#FFF7ED;--line:#FED7AA}#situationsGrid .situation-card[data-situation-id="suspicious-message"] .situation-icon{background-position:100% 33.333%!important}
+    #situationsGrid .situation-card[data-situation-id="device-problem"]{--a:#F59E0B;--soft:#FFFBEB;--line:#FDE68A}#situationsGrid .situation-card[data-situation-id="device-problem"] .situation-icon{background-position:0% 66.667%!important}
+    #situationsGrid .situation-card[data-situation-id="travel"]{--a:#38BDF8;--soft:#F0F9FF;--line:#BAE6FD}#situationsGrid .situation-card[data-situation-id="travel"] .situation-icon{background-position:33.333% 66.667%!important}
+    #situationsGrid .situation-card[data-situation-id="appointment"]{--a:#16A34A;--soft:#F0FDF4;--line:#BBF7D0}#situationsGrid .situation-card[data-situation-id="appointment"] .situation-icon{background-position:66.667% 66.667%!important}
+    #situationsGrid .situation-card[data-situation-id="update-info"]{--a:#7C3AED;--soft:#F5F3FF;--line:#DDD6FE}#situationsGrid .situation-card[data-situation-id="update-info"] .situation-icon{background-position:100% 66.667%!important}
+    .bottom-nav .nav-button span{display:block!important;width:28px!important;height:28px!important;margin:0 auto 3px!important;background-image:url('./assets/premium-icons-16.svg?r=premium-inline-20260807h')!important;background-repeat:no-repeat!important;background-size:400% 400%!important;color:transparent!important;font-size:0!important}
+    .bottom-nav .nav-button:nth-child(1) span{background-position:0% 100%!important}.bottom-nav .nav-button:nth-child(2) span{background-position:33.333% 100%!important}.bottom-nav .nav-button:nth-child(3) span{background-position:66.667% 100%!important}.bottom-nav .nav-button:nth-child(4) span{background-position:100% 100%!important}
+    @media(max-width:359px){#situationsGrid .situation-card{min-height:126px!important;padding-inline:8px!important}#situationsGrid .situation-card strong{font-size:14px!important}.bottom-nav .nav-button span{width:25px!important;height:25px!important}}
+    @media(min-width:768px){#situationsGrid .situation-card{min-height:142px!important}#situationsGrid .situation-card strong{font-size:16px!important}}
+  </style>
+  <link rel="manifest" href="./manifest.webmanifest?r=premium-inline-20260807h">
+  <link rel="stylesheet" href="../styles.css?r=premium-inline-20260807h">
+  <link rel="stylesheet" href="../visual-final.css?r=premium-inline-20260807h">
+  <link rel="stylesheet" href="./visual-v6.css?r=premium-inline-20260807h">
+  <link rel="stylesheet" href="./premium-icon-art.css?r=premium-inline-20260807h">
   <link rel="stylesheet" href="./commercial-logo.css?r=original-logo-20260806">
   <script src="./commercial-logo.js?r=original-logo-20260806" defer></script>
-  <script src="./update-shell.js?r=premium-reset-20260806g" defer></script>
+  <script src="./update-shell.js?r=premium-inline-20260807h" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
-
   <header class="app-header">
-    <button class="brand" type="button" data-route="home" aria-label="Go to home">
-      <span class="brand-placeholder" aria-hidden="true">GCR</span>
-      <span class="brand-copy"><strong>GraxCare</strong><span>Ready</span></span>
-    </button>
-    <div class="header-actions">
-      <span id="connectionStatus" class="status-pill" role="status">Online</span>
-      <button id="installButton" class="button button-secondary button-small" type="button" hidden>Add to Home</button>
-    </div>
+    <button class="brand" type="button" data-route="home" aria-label="Go to home"><span class="brand-placeholder" aria-hidden="true">GCR</span><span class="brand-copy"><strong>GraxCare</strong><span>Ready</span></span></button>
+    <div class="header-actions"><span id="connectionStatus" class="status-pill" role="status">Online</span><button id="installButton" class="button button-secondary button-small" type="button" hidden>Add to Home</button></div>
   </header>
-
   <main id="main" class="app-shell" tabindex="-1">
     <section id="homeView" class="view" data-view="home">
-      <div class="hero-card">
-        <p class="eyebrow">The 60-Second Family Care Action System</p>
-        <h1>When something changes, everyone knows what to do next.</h1>
-        <p>Choose a person, choose the situation, and follow a clear action list.</p>
-      </div>
-
-      <section class="panel" aria-labelledby="whoTitle">
-        <div class="section-heading">
-          <div>
-            <p class="step-label">Step 1 of 3</p>
-            <h2 id="whoTitle">Who needs help?</h2>
-          </div>
-          <button id="addProfileButton" class="button button-secondary" type="button">Add family member</button>
-        </div>
-        <div id="profilesList" class="profiles-grid" aria-live="polite"></div>
-      </section>
-
-      <section class="panel" aria-labelledby="situationTitle">
-        <div class="section-heading">
-          <div>
-            <p class="step-label">Step 2 of 3</p>
-            <h2 id="situationTitle">What is happening?</h2>
-          </div>
-          <p id="selectionHint" class="selection-hint">Select a family member first.</p>
-        </div>
-        <div id="situationsGrid" class="situations-grid"></div>
-      </section>
+      <div class="hero-card"><p class="eyebrow">The 60-Second Family Care Action System</p><h1>When something changes, everyone knows what to do next.</h1><p>Choose a person, choose the situation, and follow a clear action list.</p></div>
+      <section class="panel" aria-labelledby="whoTitle"><div class="section-heading"><div><p class="step-label">Step 1 of 3</p><h2 id="whoTitle">Who needs help?</h2></div><button id="addProfileButton" class="button button-secondary" type="button">Add family member</button></div><div id="profilesList" class="profiles-grid" aria-live="polite"></div></section>
+      <section class="panel" aria-labelledby="situationTitle"><div class="section-heading"><div><p class="step-label">Step 2 of 3</p><h2 id="situationTitle">What is happening?</h2></div><p id="selectionHint" class="selection-hint">Select a family member first.</p></div><div id="situationsGrid" class="situations-grid"></div></section>
     </section>
-
-    <section id="actionView" class="view" data-view="action" hidden>
-      <button class="text-button back-button" type="button" data-route="home">← Back</button>
-      <div id="actionContent"></div>
-    </section>
-
-    <section id="followupView" class="view" data-view="followup" hidden>
-      <div class="page-heading">
-        <div>
-          <p class="eyebrow">Follow Up</p>
-          <h1>Keep the next steps organized.</h1>
-        </div>
-        <button id="addFollowupButton" class="button button-primary" type="button">Add follow-up</button>
-      </div>
-      <div id="followupList" class="stack-list"></div>
-    </section>
-
-    <section id="backupView" class="view" data-view="backup" hidden>
-      <div class="page-heading">
-        <div>
-          <p class="eyebrow">Private by design</p>
-          <h1>Backup and restore</h1>
-          <p>Your information stays on this device unless you export an encrypted backup.</p>
-        </div>
-      </div>
-      <div class="two-column">
-        <article class="panel action-panel">
-          <h2>Export encrypted backup</h2>
-          <p>Create a password-protected file that can be moved to another device.</p>
-          <button id="exportBackupButton" class="button button-primary" type="button">Export backup</button>
-        </article>
-        <article class="panel action-panel">
-          <h2>Restore backup</h2>
-          <p>Replace the information on this device with a valid GraxCare Ready backup.</p>
-          <label class="button button-secondary file-button" for="restoreFileInput">Choose backup file</label>
-          <input id="restoreFileInput" class="visually-hidden" type="file" accept=".graxcare,.json,application/json">
-        </article>
-      </div>
-      <article class="panel danger-panel">
-        <h2>Reset this device</h2>
-        <p>This removes profiles, action progress, and follow-up items from this browser.</p>
-        <button id="resetDataButton" class="button button-danger" type="button">Delete all local data</button>
-      </article>
-    </section>
-
-    <section id="helpView" class="view" data-view="help" hidden>
-      <div class="page-heading">
-        <div>
-          <p class="eyebrow">Simple. Private. Prepared.</p>
-          <h1>How GraxCare Ready works</h1>
-        </div>
-      </div>
-      <div class="help-grid">
-        <article class="panel"><span class="number-badge">1</span><h2>Prepare</h2><p>Add only the information your family may need quickly.</p></article>
-        <article class="panel"><span class="number-badge">2</span><h2>Act</h2><p>Select a situation and complete the short action list.</p></article>
-        <article class="panel"><span class="number-badge">3</span><h2>Follow Up</h2><p>Track appointments, medication changes, questions, and assigned tasks.</p></article>
-      </div>
-      <article class="panel legal-note">
-        <h2>Important</h2>
-        <p>GraxCare Ready organizes information and next steps. It does not provide medical advice and does not replace emergency services. In the United States, call 911 when someone may be in immediate danger.</p>
-      </article>
-    </section>
+    <section id="actionView" class="view" data-view="action" hidden><button class="text-button back-button" type="button" data-route="home">← Back</button><div id="actionContent"></div></section>
+    <section id="followupView" class="view" data-view="followup" hidden><div class="page-heading"><div><p class="eyebrow">Follow Up</p><h1>Keep the next steps organized.</h1></div><button id="addFollowupButton" class="button button-primary" type="button">Add follow-up</button></div><div id="followupList" class="stack-list"></div></section>
+    <section id="backupView" class="view" data-view="backup" hidden><div class="page-heading"><div><p class="eyebrow">Private by design</p><h1>Backup and restore</h1><p>Your information stays on this device unless you export an encrypted backup.</p></div></div><div class="two-column"><article class="panel action-panel"><h2>Export encrypted backup</h2><p>Create a password-protected file that can be moved to another device.</p><button id="exportBackupButton" class="button button-primary" type="button">Export backup</button></article><article class="panel action-panel"><h2>Restore backup</h2><p>Replace the information on this device with a valid GraxCare Ready backup.</p><label class="button button-secondary file-button" for="restoreFileInput">Choose backup file</label><input id="restoreFileInput" class="visually-hidden" type="file" accept=".graxcare,.json,application/json"></article></div><article class="panel danger-panel"><h2>Reset this device</h2><p>This removes profiles, action progress, and follow-up items from this browser.</p><button id="resetDataButton" class="button button-danger" type="button">Delete all local data</button></article></section>
+    <section id="helpView" class="view" data-view="help" hidden><div class="page-heading"><div><p class="eyebrow">Simple. Private. Prepared.</p><h1>How GraxCare Ready works</h1></div></div><div class="help-grid"><article class="panel"><span class="number-badge">1</span><h2>Prepare</h2><p>Add only the information your family may need quickly.</p></article><article class="panel"><span class="number-badge">2</span><h2>Act</h2><p>Select a situation and complete the short action list.</p></article><article class="panel"><span class="number-badge">3</span><h2>Follow Up</h2><p>Track appointments, medication changes, questions, and assigned tasks.</p></article></div><article class="panel legal-note"><h2>Important</h2><p>GraxCare Ready organizes information and next steps. It does not provide medical advice and does not replace emergency services. In the United States, call 911 when someone may be in immediate danger.</p></article></section>
   </main>
-
-  <nav class="bottom-nav" aria-label="Primary navigation">
-    <button type="button" data-route="home" class="nav-button active"><span aria-hidden="true">⌂</span>Home</button>
-    <button type="button" data-route="followup" class="nav-button"><span aria-hidden="true">✓</span>Follow Up</button>
-    <button type="button" data-route="backup" class="nav-button"><span aria-hidden="true">⇩</span>Backup</button>
-    <button type="button" data-route="help" class="nav-button"><span aria-hidden="true">?</span>Help</button>
-  </nav>
-
-  <div id="modalRoot" class="modal-root" hidden></div>
-  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-
-  <script src="../app.js?r=premium-reset-20260806g" defer></script>
+  <nav class="bottom-nav" aria-label="Primary navigation"><button type="button" data-route="home" class="nav-button active"><span aria-hidden="true">⌂</span>Home</button><button type="button" data-route="followup" class="nav-button"><span aria-hidden="true">✓</span>Follow Up</button><button type="button" data-route="backup" class="nav-button"><span aria-hidden="true">⇩</span>Backup</button><button type="button" data-route="help" class="nav-button"><span aria-hidden="true">?</span>Help</button></nav>
+  <div id="modalRoot" class="modal-root" hidden></div><div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="../app.js?r=premium-inline-20260807h" defer></script>
 </body>
 </html>
