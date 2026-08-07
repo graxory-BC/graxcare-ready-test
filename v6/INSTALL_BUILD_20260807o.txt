@@ -1,0 +1,2 @@
+Navigation validation target: Home / Follow Up / Backup / Help
+Commercial install screen: v6/install.html
