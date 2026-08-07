@@ -1,18 +1,18 @@
-const CACHE = 'graxcare-ready-premium-inline-20260807h';
+const CACHE = 'graxcare-ready-premium-accessibility-20260807i';
 const APP_SHELL = [
   './',
   './index.html',
-  './manifest.webmanifest?r=premium-inline-20260807h',
-  './visual-v6.css?r=premium-inline-20260807h',
-  './premium-icon-art.css?r=premium-inline-20260807h',
+  './manifest.webmanifest?r=premium-accessibility-20260807i',
+  './visual-v6.css?r=premium-accessibility-20260807i',
+  './premium-icon-art.css?r=premium-accessibility-20260807i',
   './commercial-logo.css?r=original-logo-20260806',
   './commercial-logo.js?r=original-logo-20260806',
-  './update-shell.js?r=premium-inline-20260807h',
+  './update-shell.js?r=premium-accessibility-20260807i',
   './assets/graxcare-logo-master-small.b64.txt',
-  './assets/premium-icons-16.svg?r=premium-inline-20260807h',
-  '../styles.css?r=premium-inline-20260807h',
-  '../visual-final.css?r=premium-inline-20260807h',
-  '../app.js?r=premium-inline-20260807h',
+  './assets/premium-icons-16.svg?r=premium-accessibility-20260807i',
+  '../styles.css?r=premium-accessibility-20260807i',
+  '../visual-final.css?r=premium-accessibility-20260807i',
+  '../app.js?r=premium-accessibility-20260807i',
   '../assets/placeholder-icon-192.png',
   '../assets/placeholder-icon-512.png'
 ];
