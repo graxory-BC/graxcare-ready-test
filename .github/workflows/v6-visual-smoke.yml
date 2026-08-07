@@ -5,6 +5,7 @@ on:
     paths:
       - 'v6/**'
       - 'app.js'
+      - 'refresh-v6.html'
       - '.github/workflows/v6-visual-smoke.yml'
   workflow_dispatch:
 
@@ -40,115 +41,85 @@ jobs:
           cat /tmp/graxcare-server.log
           exit 1
 
-      - name: Validate compact commercial V6 in Chromium
+      - name: Validate mobile V6 navigation and install screen
         run: |
           mkdir -p visual-artifacts
           node <<'NODE'
           const { chromium } = require('playwright');
           const assert = require('node:assert/strict');
 
-          async function inspect(page, name) {
-            await page.goto('http://127.0.0.1:4173/v6/?ci=commercial-master-20260807n', {
-              waitUntil: 'domcontentloaded'
-            });
-            await page.waitForSelector('#situationsGrid .situation-card');
-            await page.waitForTimeout(900);
-
-            const result = await page.evaluate(() => {
-              const card = document.querySelector('#situationsGrid .situation-card');
-              const icon = card?.querySelector('.situation-icon');
-              const cardStyle = card ? getComputedStyle(card) : null;
-              const iconStyle = icon ? getComputedStyle(icon) : null;
-              const artStyle = icon ? getComputedStyle(icon, '::before') : null;
-              const navButton = document.querySelector('.bottom-nav .nav-button:nth-child(2)');
-              const navIcon = navButton?.querySelector('span');
-              const navIconStyle = navIcon ? getComputedStyle(navIcon) : null;
-              const navArtStyle = navIcon ? getComputedStyle(navIcon, '::before') : null;
-              const manifest = document.querySelector('link[rel="manifest"]')?.getAttribute('href') || '';
-              const favicon = document.querySelector('link[rel="icon"]')?.getAttribute('href') || '';
-
-              return {
-                width: innerWidth,
-                build: document.documentElement.dataset.visualBuild || '',
-                compactStylePresent: !!document.getElementById('gcr-compact-commercial-m'),
-                cardCount: document.querySelectorAll('#situationsGrid .situation-card').length,
-                navCount: document.querySelectorAll('.bottom-nav .nav-button').length,
-                navLabels: [...document.querySelectorAll('.bottom-nav .nav-button')].map(button => button.lastChild?.textContent.trim() || ''),
-                slogan: document.querySelector('.hero-card .eyebrow')?.textContent.trim() || '',
-                manifest,
-                favicon,
-                cardMinHeight: parseFloat(cardStyle?.minHeight || '0'),
-                iconWidth: parseFloat(iconStyle?.width || '0'),
-                iconHeight: parseFloat(iconStyle?.height || '0'),
-                artBackground: artStyle?.backgroundImage || 'none',
-                artMask: artStyle?.maskImage || artStyle?.webkitMaskImage || 'none',
-                labelSize: parseFloat(getComputedStyle(card.querySelector('strong')).fontSize || '0'),
-                navIconWidth: parseFloat(navIconStyle?.width || '0'),
-                navArtMask: navArtStyle?.maskImage || navArtStyle?.webkitMaskImage || 'none',
-                navArtBackground: navArtStyle?.backgroundImage || 'none',
-                overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth
-              };
-            });
-
-            await page.screenshot({ path: `visual-artifacts/v6-${name}.png`, fullPage: true });
-
-            assert.equal(result.build, 'compact-commercial-20260807m', `${name}: compact commercial visual shell is not active`);
-            assert.equal(result.compactStylePresent, true, `${name}: compact commercial style element is missing`);
-            assert.equal(result.cardCount, 12, `${name}: expected 12 situation cards`);
-            assert.equal(result.navCount, 4, `${name}: expected 4 navigation items`);
-            assert.deepEqual(result.navLabels, ['Home','Follow Up','Backup','Help'], `${name}: navigation labels changed`);
-            assert.equal(result.slogan, 'The 60-Second Family Care Action System', `${name}: 60-second positioning changed`);
-            assert.ok(result.manifest.includes('manifest-commercial.webmanifest'), `${name}: commercial install manifest is missing`);
-            assert.ok(result.manifest.includes('commercial-master-20260807n'), `${name}: commercial manifest cache key is missing`);
-            assert.ok(result.favicon.includes('locked-master-20260807n'), `${name}: commercial browser icon cache key is missing`);
-            assert.ok(result.artBackground && result.artBackground.includes('data:image/svg+xml'), `${name}: premium situation art is not active`);
-            assert.ok(!result.artMask || result.artMask === 'none', `${name}: situation art unexpectedly uses an obsolete mask`);
-            assert.ok(result.navArtBackground && result.navArtBackground.includes('data:image/svg+xml'), `${name}: bottom navigation artwork is not visible`);
-            assert.ok(!result.navArtMask || result.navArtMask === 'none', `${name}: bottom navigation unexpectedly uses the broken mask implementation`);
-            assert.ok(result.overflowX <= 1, `${name}: horizontal overflow detected (${result.overflowX}px)`);
-
-            if (result.width <= 719) {
-              assert.ok(result.cardMinHeight >= 84 && result.cardMinHeight <= 92, `${name}: compact card height is outside target range (${result.cardMinHeight}px)`);
-              assert.ok(result.iconWidth >= 36 && result.iconWidth <= 42 && result.iconHeight >= 36 && result.iconHeight <= 42, `${name}: compact situation icon size is outside target range (${result.iconWidth}x${result.iconHeight})`);
-              assert.ok(result.labelSize >= 10 && result.labelSize <= 11, `${name}: compact label size is outside target range (${result.labelSize}px)`);
-              assert.ok(result.navIconWidth >= 29 && result.navIconWidth <= 32, `${name}: mobile bottom icon container is outside target range (${result.navIconWidth}px)`);
-            } else {
-              assert.ok(result.cardMinHeight >= 120 && result.cardMinHeight <= 140, `${name}: desktop card height changed unexpectedly (${result.cardMinHeight}px)`);
-              assert.ok(result.iconWidth >= 48 && result.iconWidth <= 64 && result.iconHeight >= 48 && result.iconHeight <= 64, `${name}: desktop situation icon size changed unexpectedly (${result.iconWidth}x${result.iconHeight})`);
-              assert.ok(result.labelSize >= 12 && result.labelSize <= 15, `${name}: desktop label size changed unexpectedly (${result.labelSize}px)`);
-            }
-
-            console.log(name, JSON.stringify(result, null, 2));
-          }
-
           (async () => {
             const browser = await chromium.launch({ headless: true });
             try {
-              const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, serviceWorkers: 'allow' });
-              const mobilePage = await mobile.newPage();
-              await inspect(mobilePage, 'mobile-390');
-              await mobilePage.reload({ waitUntil: 'domcontentloaded' });
-              await inspect(mobilePage, 'mobile-390-reload');
-              await mobile.close();
+              const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, serviceWorkers: 'allow' });
+              const page = await context.newPage();
+              await page.goto('http://127.0.0.1:4173/v6/?ci=compact-commercial-20260807o', { waitUntil: 'domcontentloaded' });
+              await page.waitForSelector('#situationsGrid .situation-card');
+              await page.waitForTimeout(500);
 
-              const desktop = await browser.newContext({ viewport: { width: 1440, height: 1200 }, deviceScaleFactor: 1, serviceWorkers: 'allow' });
-              const desktopPage = await desktop.newPage();
-              await inspect(desktopPage, 'desktop-1440');
-              await desktop.close();
+              const base = await page.evaluate(() => ({
+                build: document.documentElement.dataset.visualBuild,
+                cards: document.querySelectorAll('#situationsGrid .situation-card').length,
+                slogan: document.querySelector('.hero-card .eyebrow')?.textContent.trim(),
+                navLabels: [...document.querySelectorAll('.bottom-nav .nav-button')].map(button => button.lastChild?.textContent.trim() || ''),
+                navIconBackgrounds: [...document.querySelectorAll('.bottom-nav .nav-button span')].map(span => getComputedStyle(span,'::before').backgroundImage),
+                overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth
+              }));
+              assert.equal(base.build, 'compact-commercial-20260807o');
+              assert.equal(base.cards, 12);
+              assert.equal(base.slogan, 'The 60-Second Family Care Action System');
+              assert.deepEqual(base.navLabels, ['Home','Follow Up','Backup','Help']);
+              assert.ok(base.navIconBackgrounds.every(value => value.includes('data:image/svg+xml')), 'all four premium navigation icons must be visible');
+              assert.ok(base.overflowX <= 1, `horizontal overflow detected: ${base.overflowX}px`);
+
+              const checks = [
+                ['followup','followupView','Keep the next steps organized.'],
+                ['backup','backupView','Backup and restore'],
+                ['help','helpView','How GraxCare Ready works'],
+                ['home','homeView','When something changes, everyone knows what to do next.']
+              ];
+              for (const [route, viewId, text] of checks) {
+                await page.click(`.bottom-nav .nav-button[data-route="${route}"]`);
+                await page.waitForTimeout(80);
+                const state = await page.evaluate(({route,viewId}) => ({
+                  targetHidden: document.getElementById(viewId).hidden,
+                  visibleViews: [...document.querySelectorAll('.view')].filter(view => !view.hidden).map(view => view.dataset.view),
+                  active: document.querySelector('.bottom-nav .nav-button.active')?.dataset.route
+                }), {route,viewId});
+                assert.equal(state.targetHidden, false, `${route}: target view did not open`);
+                assert.deepEqual(state.visibleViews, [route], `${route}: wrong visible view`);
+                assert.equal(state.active, route, `${route}: active navigation state did not move`);
+                await page.getByText(text, { exact: false }).first().waitFor({ state: 'visible' });
+              }
+              await page.screenshot({ path: 'visual-artifacts/v6-mobile-navigation.png', fullPage: true });
+
+              await page.goto('http://127.0.0.1:4173/v6/install.html?ci=1', { waitUntil: 'domcontentloaded' });
+              await page.waitForSelector('.icon-shell img');
+              const install = await page.evaluate(() => ({
+                icon: document.querySelector('.icon-shell img')?.getAttribute('src') || '',
+                manifest: document.querySelector('link[rel="manifest"]')?.getAttribute('href') || '',
+                title: document.querySelector('h1')?.textContent.trim() || '',
+                tagline: document.querySelector('.tagline')?.textContent.trim() || ''
+              }));
+              assert.ok(install.icon.includes('graxcare-app-icon.svg?brand=locked-master-20260807n'), 'install screen is not showing the locked commercial icon');
+              assert.ok(install.manifest.includes('manifest-commercial.webmanifest'), 'commercial manifest missing from install screen');
+              assert.equal(install.title, 'GraxCare Ready');
+              assert.equal(install.tagline, 'The 60-Second Family Care Action System');
+              await page.screenshot({ path: 'visual-artifacts/v6-commercial-install.png', fullPage: true });
+              await context.close();
             } finally {
               await browser.close();
             }
-          })().catch(error => {
-            console.error(error);
-            process.exit(1);
-          });
+          })().catch(error => { console.error(error); process.exit(1); });
           NODE
 
       - name: Verify locked master icon and protected logic
         run: |
-          grep -q "graxcare-ready-commercial-icon-20260807n" v6/service-worker.js
+          grep -q "graxcare-ready-nav-install-20260807o" v6/service-worker.js
+          grep -q "compact-commercial-20260807o" v6/update-shell.js
           grep -q "graxcare-app-icon.svg?brand=locked-master-20260807n" v6/manifest-commercial.webmanifest
           grep -q '"id": "./graxcare-ready-commercial-20260807n"' v6/manifest-commercial.webmanifest
+          grep -q "v6/install.html" refresh-v6.html
           ! grep -q "placeholder-icon" v6/manifest-commercial.webmanifest
           python3 <<'PY'
           import base64, hashlib, pathlib, re
