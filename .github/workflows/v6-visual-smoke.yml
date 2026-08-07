@@ -48,7 +48,7 @@ jobs:
           const assert = require('node:assert/strict');
 
           async function inspect(page, name) {
-            await page.goto('http://127.0.0.1:4173/v6/?ci=compact-commercial-20260807m', {
+            await page.goto('http://127.0.0.1:4173/v6/?ci=commercial-master-20260807n', {
               waitUntil: 'domcontentloaded'
             });
             await page.waitForSelector('#situationsGrid .situation-card');
@@ -98,8 +98,9 @@ jobs:
             assert.equal(result.navCount, 4, `${name}: expected 4 navigation items`);
             assert.deepEqual(result.navLabels, ['Home','Follow Up','Backup','Help'], `${name}: navigation labels changed`);
             assert.equal(result.slogan, 'The 60-Second Family Care Action System', `${name}: 60-second positioning changed`);
-            assert.ok(result.manifest.includes('compact-commercial-20260807m'), `${name}: refreshed manifest is missing`);
-            assert.ok(result.favicon.includes('graxcare-app-icon.svg'), `${name}: commercial browser icon is missing`);
+            assert.ok(result.manifest.includes('manifest-commercial.webmanifest'), `${name}: commercial install manifest is missing`);
+            assert.ok(result.manifest.includes('commercial-master-20260807n'), `${name}: commercial manifest cache key is missing`);
+            assert.ok(result.favicon.includes('locked-master-20260807n'), `${name}: commercial browser icon cache key is missing`);
             assert.ok(result.artBackground && result.artBackground.includes('data:image/svg+xml'), `${name}: premium situation art is not active`);
             assert.ok(!result.artMask || result.artMask === 'none', `${name}: situation art unexpectedly uses an obsolete mask`);
             assert.ok(result.navArtBackground && result.navArtBackground.includes('data:image/svg+xml'), `${name}: bottom navigation artwork is not visible`);
@@ -143,13 +144,24 @@ jobs:
           });
           NODE
 
-      - name: Verify commercial icon, cache and protected logic
+      - name: Verify locked master icon and protected logic
         run: |
-          grep -q "compact-commercial-20260807m" v6/update-shell.js
-          grep -q "graxcare-ready-compact-commercial-20260807m" v6/service-worker.js
-          grep -q "graxcare-app-icon.svg?r=commercial-master-20260807m" v6/manifest.webmanifest
-          grep -q "data:image/webp;base64" v6/assets/graxcare-app-icon.svg
-          ! grep -q "placeholder-icon" v6/manifest.webmanifest
+          grep -q "graxcare-ready-commercial-icon-20260807n" v6/service-worker.js
+          grep -q "graxcare-app-icon.svg?brand=locked-master-20260807n" v6/manifest-commercial.webmanifest
+          grep -q '"id": "./graxcare-ready-commercial-20260807n"' v6/manifest-commercial.webmanifest
+          ! grep -q "placeholder-icon" v6/manifest-commercial.webmanifest
+          python3 <<'PY'
+          import base64, hashlib, pathlib, re
+          master = pathlib.Path('v6/assets/graxcare-logo-master-small.b64.txt').read_text().strip()
+          svg = pathlib.Path('v6/assets/graxcare-app-icon.svg').read_text()
+          match = re.search(r'data:image/webp;base64,([^\"]+)', svg)
+          assert match, 'App icon does not embed the verified commercial master asset'
+          embedded = match.group(1)
+          assert embedded == master, 'Startup icon differs from the verified commercial master asset'
+          digest = hashlib.sha256(base64.b64decode(master)).hexdigest()
+          assert digest == 'ea522338f8b0336d2a87ef230f574065c0956a9a55b22ab92d51cb9186bd8860', 'Commercial master checksum changed'
+          print('Commercial master icon verified:', digest)
+          PY
           grep -q "const STORAGE_KEY = 'graxcare_ready_state_v1';" app.js
           test "$(git hash-object app.js)" = "216ad539cb5daca5c312b522dae79c3f83dae502"
 
