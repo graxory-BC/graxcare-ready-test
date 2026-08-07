@@ -1,4 +1,4 @@
-const CACHE = 'graxcare-ready-premium-accessibility-final-20260807j';
+const CACHE = 'graxcare-ready-premium-balance-20260807k';
 const APP_SHELL = [
   './',
   './index.html',
