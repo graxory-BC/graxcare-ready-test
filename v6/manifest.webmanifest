@@ -8,7 +8,7 @@
   "theme_color": "#061a38",
   "lang": "en-US",
   "icons": [
-    {"src":"./assets/graxcare-app-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}
+    {"src":"./assets/graxcare-app-icon.svg?r=commercial-master-20260807m","sizes":"any","type":"image/svg+xml","purpose":"any"}
   ],
   "id": "./v6/",
   "scope": "./",
