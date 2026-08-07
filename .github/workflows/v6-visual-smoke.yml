@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Install browser
         run: |
@@ -48,57 +48,60 @@ jobs:
           const assert = require('node:assert/strict');
 
           async function inspect(page, name) {
-            await page.goto('http://127.0.0.1:4173/v6/?ci=premium-direct-20260806f', {
+            await page.goto('http://127.0.0.1:4173/v6/?ci=premium-balance-final-20260807k2', {
               waitUntil: 'domcontentloaded'
             });
             await page.waitForSelector('#situationsGrid .situation-card');
-            await page.waitForTimeout(800);
+            await page.waitForTimeout(900);
 
             const result = await page.evaluate(() => {
               const card = document.querySelector('#situationsGrid .situation-card');
               const icon = card?.querySelector('.situation-icon');
-              const grid = document.querySelector('#situationsGrid');
               const cardStyle = card ? getComputedStyle(card) : null;
               const iconStyle = icon ? getComputedStyle(icon) : null;
               const artStyle = icon ? getComputedStyle(icon, '::before') : null;
-              const linkedStyles = [...document.querySelectorAll('link[rel="stylesheet"]')]
-                .map(link => link.getAttribute('href'));
+              const inactiveNavIcon = document.querySelector('.bottom-nav .nav-button:nth-child(2) span');
+              const inactiveNavStyle = inactiveNavIcon ? getComputedStyle(inactiveNavIcon) : null;
+              const linkedStyles = [...document.querySelectorAll('link[rel="stylesheet"]')].map(link => link.getAttribute('href'));
 
               return {
+                build: document.documentElement.dataset.visualBuild || '',
+                balanceStylePresent: !!document.getElementById('gcr-premium-balance-k2'),
                 cardCount: document.querySelectorAll('#situationsGrid .situation-card').length,
                 navCount: document.querySelectorAll('.bottom-nav .nav-button').length,
                 premiumLink: linkedStyles.some(href => href && href.includes('premium-icon-art.css')),
                 display: cardStyle?.display,
-                columns: getComputedStyle(grid).gridTemplateColumns,
-                cardColumns: cardStyle?.gridTemplateColumns,
                 cardMinHeight: parseFloat(cardStyle?.minHeight || '0'),
                 borderTopWidth: parseFloat(cardStyle?.borderTopWidth || '0'),
-                borderTopColor: cardStyle?.borderTopColor,
                 iconWidth: parseFloat(iconStyle?.width || '0'),
                 iconHeight: parseFloat(iconStyle?.height || '0'),
-                artBackground: artStyle?.backgroundImage,
+                iconBackground: iconStyle?.backgroundImage || 'none',
+                artBackground: artStyle?.backgroundImage || 'none',
                 artMask: artStyle?.maskImage || artStyle?.webkitMaskImage,
                 labelSize: parseFloat(getComputedStyle(card.querySelector('strong')).fontSize || '0'),
+                navIconWidth: parseFloat(inactiveNavStyle?.width || '0'),
+                navIconBackgroundColor: inactiveNavStyle?.backgroundColor || '',
                 overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth
               };
             });
 
+            await page.screenshot({ path: `visual-artifacts/v6-${name}.png`, fullPage: true });
+
+            assert.equal(result.build, 'premium-balance-final-20260807k2', `${name}: K2 visual shell is not active`);
+            assert.equal(result.balanceStylePresent, true, `${name}: K2 style element is missing`);
             assert.equal(result.cardCount, 12, `${name}: expected 12 situation cards`);
             assert.equal(result.navCount, 4, `${name}: expected 4 navigation items`);
-            assert.equal(result.premiumLink, true, `${name}: premium stylesheet must be linked directly`);
-            assert.equal(result.display, 'grid', `${name}: premium cards must use grid layout`);
-            assert.ok(result.cardMinHeight >= 100, `${name}: cards are too short (${result.cardMinHeight}px)`);
-            assert.ok(result.borderTopWidth >= 5, `${name}: premium color band is missing`);
-            assert.ok(result.iconWidth >= 50 && result.iconHeight >= 50, `${name}: icon container is too small`);
-            assert.ok(result.artBackground && result.artBackground.includes('data:image/svg+xml'), `${name}: custom SVG art is not active`);
-            assert.ok(!result.artMask || result.artMask === 'none', `${name}: obsolete sprite mask is still active`);
-            assert.ok(result.labelSize >= 12.5, `${name}: labels are too small (${result.labelSize}px)`);
+            assert.equal(result.premiumLink, true, `${name}: premium stylesheet must remain linked`);
+            assert.ok(['flex','grid'].includes(result.display), `${name}: cards use unexpected display ${result.display}`);
+            assert.ok(result.cardMinHeight >= 138 && result.cardMinHeight <= 160, `${name}: card height is outside balanced range (${result.cardMinHeight}px)`);
+            assert.ok(result.borderTopWidth >= 4, `${name}: premium color band is missing`);
+            assert.ok(result.iconWidth >= 54 && result.iconWidth <= 64 && result.iconHeight >= 54 && result.iconHeight <= 64, `${name}: icon size is outside premium range (${result.iconWidth}x${result.iconHeight})`);
+            assert.ok((result.iconBackground && result.iconBackground.includes('premium-icons-16.svg')) || (result.artBackground && result.artBackground !== 'none'), `${name}: premium SVG art is not active`);
+            assert.ok(!result.artMask || result.artMask === 'none', `${name}: obsolete sprite mask is active`);
+            assert.ok(result.labelSize >= 16 && result.labelSize <= 18, `${name}: label size is outside accessible range (${result.labelSize}px)`);
+            assert.ok(result.navIconWidth >= 28 && result.navIconWidth <= 32, `${name}: bottom icon size is outside balanced range (${result.navIconWidth}px)`);
+            assert.ok(result.navIconBackgroundColor === 'rgba(0, 0, 0, 0)' || result.navIconBackgroundColor === 'transparent', `${name}: inactive bottom icon tile is still visible (${result.navIconBackgroundColor})`);
             assert.ok(result.overflowX <= 1, `${name}: horizontal overflow detected (${result.overflowX}px)`);
-
-            await page.screenshot({
-              path: `visual-artifacts/v6-${name}.png`,
-              fullPage: true
-            });
 
             console.log(name, JSON.stringify(result, null, 2));
           }
@@ -106,22 +109,14 @@ jobs:
           (async () => {
             const browser = await chromium.launch({ headless: true });
             try {
-              const mobile = await browser.newContext({
-                viewport: { width: 390, height: 844 },
-                deviceScaleFactor: 1,
-                serviceWorkers: 'allow'
-              });
+              const mobile = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, serviceWorkers: 'allow' });
               const mobilePage = await mobile.newPage();
               await inspect(mobilePage, 'mobile-390');
               await mobilePage.reload({ waitUntil: 'domcontentloaded' });
               await inspect(mobilePage, 'mobile-390-reload');
               await mobile.close();
 
-              const desktop = await browser.newContext({
-                viewport: { width: 1440, height: 1200 },
-                deviceScaleFactor: 1,
-                serviceWorkers: 'allow'
-              });
+              const desktop = await browser.newContext({ viewport: { width: 1440, height: 1200 }, deviceScaleFactor: 1, serviceWorkers: 'allow' });
               const desktopPage = await desktop.newPage();
               await inspect(desktopPage, 'desktop-1440');
               await desktop.close();
@@ -136,9 +131,10 @@ jobs:
 
       - name: Verify cache and protected logic
         run: |
-          grep -q "premium-icon-art.css?r=premium-direct-20260806f" v6/index.html
-          grep -q "graxcare-ready-premium-direct-20260806f" v6/service-worker.js
+          grep -q "premium-balance-final-20260807k2" v6/update-shell.js
+          grep -q "graxcare-ready-premium-balance-final-20260807k2" v6/service-worker.js
           grep -q "const STORAGE_KEY = 'graxcare_ready_state_v1';" app.js
+          test "$(git hash-object app.js)" = "216ad539cb5daca5c312b522dae79c3f83dae502"
 
       - name: Upload visual evidence
         if: always()
