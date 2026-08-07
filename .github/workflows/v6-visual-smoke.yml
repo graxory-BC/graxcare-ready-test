@@ -40,7 +40,7 @@ jobs:
           cat /tmp/graxcare-server.log
           exit 1
 
-      - name: Validate premium UI in Chromium
+      - name: Validate approved V6 in Chromium
         run: |
           mkdir -p visual-artifacts
           node <<'NODE'
@@ -48,7 +48,7 @@ jobs:
           const assert = require('node:assert/strict');
 
           async function inspect(page, name) {
-            await page.goto('http://127.0.0.1:4173/v6/?ci=premium-balance-final-20260807k2', {
+            await page.goto('http://127.0.0.1:4173/v6/?ci=approved-sync-20260807l', {
               waitUntil: 'domcontentloaded'
             });
             await page.waitForSelector('#situationsGrid .situation-card');
@@ -60,47 +60,50 @@ jobs:
               const cardStyle = card ? getComputedStyle(card) : null;
               const iconStyle = icon ? getComputedStyle(icon) : null;
               const artStyle = icon ? getComputedStyle(icon, '::before') : null;
-              const inactiveNavIcon = document.querySelector('.bottom-nav .nav-button:nth-child(2) span');
-              const inactiveNavStyle = inactiveNavIcon ? getComputedStyle(inactiveNavIcon) : null;
-              const linkedStyles = [...document.querySelectorAll('link[rel="stylesheet"]')].map(link => link.getAttribute('href'));
+              const navButton = document.querySelector('.bottom-nav .nav-button:nth-child(2)');
+              const navIcon = navButton?.querySelector('span');
+              const navIconStyle = navIcon ? getComputedStyle(navIcon) : null;
+              const navArtStyle = navIcon ? getComputedStyle(navIcon, '::before') : null;
+              const manifest = document.querySelector('link[rel="manifest"]')?.getAttribute('href') || '';
 
               return {
                 build: document.documentElement.dataset.visualBuild || '',
-                balanceStylePresent: !!document.getElementById('gcr-premium-balance-k2'),
+                approvedStylePresent: !!document.getElementById('gcr-approved-sync-l'),
                 cardCount: document.querySelectorAll('#situationsGrid .situation-card').length,
                 navCount: document.querySelectorAll('.bottom-nav .nav-button').length,
-                premiumLink: linkedStyles.some(href => href && href.includes('premium-icon-art.css')),
-                display: cardStyle?.display,
+                navLabels: [...document.querySelectorAll('.bottom-nav .nav-button')].map(button => button.textContent.trim()),
+                slogan: document.querySelector('.hero-card .eyebrow')?.textContent.trim() || '',
+                manifest,
                 cardMinHeight: parseFloat(cardStyle?.minHeight || '0'),
-                borderTopWidth: parseFloat(cardStyle?.borderTopWidth || '0'),
                 iconWidth: parseFloat(iconStyle?.width || '0'),
                 iconHeight: parseFloat(iconStyle?.height || '0'),
-                iconBackground: iconStyle?.backgroundImage || 'none',
                 artBackground: artStyle?.backgroundImage || 'none',
-                artMask: artStyle?.maskImage || artStyle?.webkitMaskImage,
+                artMask: artStyle?.maskImage || artStyle?.webkitMaskImage || 'none',
                 labelSize: parseFloat(getComputedStyle(card.querySelector('strong')).fontSize || '0'),
-                navIconWidth: parseFloat(inactiveNavStyle?.width || '0'),
-                navIconBackgroundColor: inactiveNavStyle?.backgroundColor || '',
+                navIconWidth: parseFloat(navIconStyle?.width || '0'),
+                navArtMask: navArtStyle?.maskImage || navArtStyle?.webkitMaskImage || 'none',
+                navArtBackground: navArtStyle?.backgroundImage || 'none',
                 overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth
               };
             });
 
             await page.screenshot({ path: `visual-artifacts/v6-${name}.png`, fullPage: true });
 
-            assert.equal(result.build, 'premium-balance-final-20260807k2', `${name}: K2 visual shell is not active`);
-            assert.equal(result.balanceStylePresent, true, `${name}: K2 style element is missing`);
+            assert.equal(result.build, 'approved-sync-20260807l', `${name}: approved visual shell is not active`);
+            assert.equal(result.approvedStylePresent, true, `${name}: approved style element is missing`);
             assert.equal(result.cardCount, 12, `${name}: expected 12 situation cards`);
             assert.equal(result.navCount, 4, `${name}: expected 4 navigation items`);
-            assert.equal(result.premiumLink, true, `${name}: premium stylesheet must remain linked`);
-            assert.ok(['flex','grid'].includes(result.display), `${name}: cards use unexpected display ${result.display}`);
-            assert.ok(result.cardMinHeight >= 138 && result.cardMinHeight <= 160, `${name}: card height is outside balanced range (${result.cardMinHeight}px)`);
-            assert.ok(result.borderTopWidth >= 4, `${name}: premium color band is missing`);
-            assert.ok(result.iconWidth >= 54 && result.iconWidth <= 64 && result.iconHeight >= 54 && result.iconHeight <= 64, `${name}: icon size is outside premium range (${result.iconWidth}x${result.iconHeight})`);
-            assert.ok((result.iconBackground && result.iconBackground.includes('premium-icons-16.svg')) || (result.artBackground && result.artBackground !== 'none'), `${name}: premium SVG art is not active`);
-            assert.ok(!result.artMask || result.artMask === 'none', `${name}: obsolete sprite mask is active`);
-            assert.ok(result.labelSize >= 16 && result.labelSize <= 18, `${name}: label size is outside accessible range (${result.labelSize}px)`);
-            assert.ok(result.navIconWidth >= 28 && result.navIconWidth <= 32, `${name}: bottom icon size is outside balanced range (${result.navIconWidth}px)`);
-            assert.ok(result.navIconBackgroundColor === 'rgba(0, 0, 0, 0)' || result.navIconBackgroundColor === 'transparent', `${name}: inactive bottom icon tile is still visible (${result.navIconBackgroundColor})`);
+            assert.deepEqual(result.navLabels, ['Home','Follow Up','Backup','Help'], `${name}: navigation labels changed`);
+            assert.equal(result.slogan, 'The 60-Second Family Care Action System', `${name}: 60-second positioning changed`);
+            assert.ok(result.manifest.includes('manifest.webmanifest'), `${name}: manifest is missing`);
+            assert.ok(result.cardMinHeight >= 124 && result.cardMinHeight <= 142, `${name}: card height is outside approved range (${result.cardMinHeight}px)`);
+            assert.ok(result.iconWidth >= 44 && result.iconWidth <= 56 && result.iconHeight >= 44 && result.iconHeight <= 56, `${name}: situation icon size is outside approved range (${result.iconWidth}x${result.iconHeight})`);
+            assert.ok(result.artBackground && result.artBackground.includes('data:image/svg+xml'), `${name}: premium situation art is not active`);
+            assert.ok(!result.artMask || result.artMask === 'none', `${name}: situation art unexpectedly uses old mask`);
+            assert.ok(result.labelSize >= 10.5 && result.labelSize <= 14.5, `${name}: label size is outside approved range (${result.labelSize}px)`);
+            assert.ok(result.navIconWidth >= 29 && result.navIconWidth <= 32, `${name}: bottom navigation icon container changed (${result.navIconWidth}px)`);
+            assert.ok(result.navArtMask && result.navArtMask !== 'none', `${name}: approved bottom navigation icon family is not active`);
+            assert.ok(!result.navArtBackground || result.navArtBackground === 'none', `${name}: rejected colored bottom icon art is still active`);
             assert.ok(result.overflowX <= 1, `${name}: horizontal overflow detected (${result.overflowX}px)`);
 
             console.log(name, JSON.stringify(result, null, 2));
@@ -129,10 +132,13 @@ jobs:
           });
           NODE
 
-      - name: Verify cache and protected logic
+      - name: Verify icon, cache and protected logic
         run: |
-          grep -q "premium-balance-final-20260807k2" v6/update-shell.js
-          grep -q "graxcare-ready-premium-balance-final-20260807k2" v6/service-worker.js
+          grep -q "approved-sync-20260807l" v6/update-shell.js
+          grep -q "graxcare-ready-approved-sync-20260807l" v6/service-worker.js
+          grep -q "graxcare-app-icon.svg" v6/manifest.webmanifest
+          test -s v6/assets/graxcare-app-icon.svg
+          ! grep -q "placeholder-icon" v6/manifest.webmanifest
           grep -q "const STORAGE_KEY = 'graxcare_ready_state_v1';" app.js
           test "$(git hash-object app.js)" = "216ad539cb5daca5c312b522dae79c3f83dae502"
 
