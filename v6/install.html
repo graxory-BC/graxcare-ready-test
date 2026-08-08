@@ -6,8 +6,9 @@
   <meta name="theme-color" content="#061a38">
   <meta name="description" content="Install GraxCare Ready — The 60-Second Family Care Action System.">
   <title>Install GraxCare Ready</title>
-  <link rel="manifest" href="./manifest-commercial.webmanifest?r=commercial-hq-20260807u">
-  <link rel="icon" href="./assets/graxcare-app-icon.svg?brand=commercial-hq-20260807u" type="image/svg+xml">
+  <link rel="manifest" href="./manifest-commercial.webmanifest?r=commercial-hq-20260807v">
+  <link rel="icon" href="./assets/graxcare-icon-192.png?v=20260807v" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="./assets/graxcare-icon-512.png?v=20260807v">
   <style>
     *{box-sizing:border-box}
     [hidden]{display:none!important}
@@ -16,19 +17,17 @@
     .card{width:min(420px,100%);background:#fff;border:1px solid #dde4ec;border-radius:28px;padding:30px 24px 28px;box-shadow:0 22px 60px rgba(6,26,56,.14);text-align:center}
     .icon-shell{width:154px;height:154px;margin:0 auto 20px;display:grid;place-items:center;border-radius:32px;background:#fff;border:1px solid #e3e8ef;box-shadow:0 14px 32px rgba(13,27,61,.12);overflow:hidden}
     .icon-shell img{width:144px;height:144px;object-fit:contain;display:block;image-rendering:auto}
-    .icon-loader{width:34px;height:34px;border:4px solid #d9efec;border-top-color:#087c76;border-radius:50%;animation:spin .8s linear infinite}
     h1{margin:0;font-size:29px;line-height:1.08;letter-spacing:-.035em}
     .tagline{margin:10px auto 23px;max-width:310px;color:#53647c;line-height:1.42;font-size:15px}
     .button{width:100%;min-height:54px;border:0;border-radius:15px;padding:14px 16px;background:#087c76;color:#fff;font-weight:850;font-size:16px;cursor:pointer;box-shadow:0 7px 18px rgba(8,124,118,.18)}
     .button:disabled{opacity:.62;cursor:wait}
     .status{margin:13px 0 0;font-size:12.5px;line-height:1.4;color:#6b7789}
     .status.error{color:#b42318;font-weight:700}
-    @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
   <main class="card">
-    <div id="iconShell" class="icon-shell" aria-label="GraxCare Ready commercial logo"><span class="icon-loader" aria-hidden="true"></span></div>
+    <div class="icon-shell"><img id="installIcon" src="./assets/graxcare-icon-512.png?v=20260807v" width="144" height="144" alt="GraxCare Ready"></div>
     <h1>GraxCare Ready</h1>
     <p class="tagline">The 60-Second Family Care Action System</p>
     <button id="primaryButton" class="button" type="button" disabled>Preparing…</button>
@@ -38,10 +37,9 @@
     (()=>{
       const button=document.getElementById('primaryButton');
       const status=document.getElementById('status');
-      const iconShell=document.getElementById('iconShell');
+      const icon=document.getElementById('installIcon');
       let promptEvent=null;
       let iconReady=false;
-      let fallbackReady=false;
       const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 
       function setStatus(message='',isError=false){
@@ -51,48 +49,22 @@
       }
 
       function syncButton(){
-        if(!iconReady){
-          button.disabled=true;
-          button.textContent='Preparing…';
-          return;
-        }
-        button.disabled=false;
-        if(standalone||fallbackReady){
-          button.dataset.mode='open';
-          button.textContent='Open GraxCare Ready';
-          return;
-        }
-        if(promptEvent){
-          button.dataset.mode='install';
-          button.textContent='Install GraxCare Ready';
-          return;
-        }
-        button.disabled=true;
-        button.textContent='Preparing…';
+        if(!iconReady){button.disabled=true;button.textContent='Preparing…';return;}
+        if(standalone){button.disabled=false;button.dataset.mode='open';button.textContent='Open GraxCare Ready';return;}
+        if(promptEvent){button.disabled=false;button.dataset.mode='install';button.textContent='Install GraxCare Ready';return;}
+        button.disabled=false;button.dataset.mode='open';button.textContent='Open GraxCare Ready';
       }
 
-      async function loadCommercialIcon(){
+      async function verifyIcon(){
         try{
-          const response=await fetch('./assets/graxcare-app-icon.svg?brand=commercial-hq-20260807u',{cache:'no-store'});
-          if(!response.ok) throw new Error('Commercial icon unavailable');
-          const svg=await response.text();
-          const match=svg.match(/href=["'](data:image\/(?:webp|png|jpeg);base64,[^"']+)["']/i);
-          if(!match) throw new Error('Commercial icon data missing');
-
-          const image=new Image();
-          image.id='installIcon';
-          image.alt='GraxCare Ready';
-          image.decoding='async';
-          image.src=match[1];
-          await image.decode();
-          if(image.naturalWidth<300||image.naturalHeight<300) throw new Error('Commercial icon resolution below target');
-
-          iconShell.replaceChildren(image);
+          if(!icon.complete) await new Promise((resolve,reject)=>{icon.addEventListener('load',resolve,{once:true});icon.addEventListener('error',reject,{once:true});});
+          await icon.decode();
+          if(icon.naturalWidth!==512||icon.naturalHeight!==512) throw new Error('Invalid icon dimensions');
           iconReady=true;
           syncButton();
-        }catch(error){
-          iconShell.replaceChildren();
-          setStatus('Commercial logo could not be verified. Reload this page once.',true);
+        }catch{
+          icon.hidden=true;
+          setStatus('The commercial icon could not be verified. Reload this page once.',true);
           button.disabled=true;
           button.textContent='Reload required';
         }
@@ -101,16 +73,16 @@
       window.addEventListener('beforeinstallprompt',event=>{
         event.preventDefault();
         promptEvent=event;
-        fallbackReady=false;
         setStatus('');
         syncButton();
       });
 
       window.addEventListener('appinstalled',()=>{
         promptEvent=null;
-        fallbackReady=true;
         setStatus('Installation complete.');
-        syncButton();
+        button.dataset.mode='open';
+        button.textContent='Open GraxCare Ready';
+        button.disabled=false;
       });
 
       button.addEventListener('click',async()=>{
@@ -121,35 +93,28 @@
           const choice=await promptEvent.userChoice;
           promptEvent=null;
           if(choice.outcome==='accepted'){
-            fallbackReady=true;
             setStatus('Installation complete.');
+            button.dataset.mode='open';
+            button.textContent='Open GraxCare Ready';
+            button.disabled=false;
           }else{
-            fallbackReady=false;
             setStatus('Installation not completed.');
+            syncButton();
           }
-          syncButton();
           return;
         }
-        location.href='./?build=compact-commercial-20260807u';
+        location.href='./?build=compact-commercial-20260807v';
       });
 
       if('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+      verifyIcon();
 
-      loadCommercialIcon();
-
-      if(standalone){
-        fallbackReady=true;
-        setStatus('Already installed on this device.');
-        syncButton();
-      }else{
-        setTimeout(()=>{
-          if(!promptEvent&&iconReady){
-            fallbackReady=true;
-            setStatus('To install, use Chrome menu → Install app.');
-            syncButton();
-          }
-        },2200);
-      }
+      setTimeout(()=>{
+        if(!promptEvent&&!standalone&&iconReady){
+          setStatus('To install, use Chrome menu → Install app.');
+          syncButton();
+        }
+      },2200);
     })();
   </script>
 </body>
