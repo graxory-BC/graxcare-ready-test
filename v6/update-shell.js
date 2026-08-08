@@ -1,12 +1,10 @@
 (() => {
   'use strict';
 
-  document.documentElement.dataset.visualBuild = 'compact-commercial-20260807p';
+  document.documentElement.dataset.visualBuild = 'compact-commercial-20260807q';
   const style = document.createElement('style');
-  style.id = 'gcr-compact-commercial-p';
+  style.id = 'gcr-compact-commercial-q';
   style.textContent = `
-    /* Primary views are mutually exclusive. This prevents a selected section from
-       remaining below another section on mobile browsers. */
     html body .view[hidden]{display:none!important}
 
     @media(max-width:719px){
@@ -91,73 +89,25 @@
   `;
   document.head.appendChild(style);
 
-  const primaryRoutes = new Set(['home','followup','backup','help']);
-
-  function scrollRouteIntoPosition(target) {
-    if (!target) return;
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const header = document.querySelector('.app-header');
-      const headerHeight = header ? header.getBoundingClientRect().height : 0;
-      const absoluteTop = target.getBoundingClientRect().top + window.scrollY;
-      const desiredTop = Math.max(0, absoluteTop - headerHeight - 6);
-      window.scrollTo({ top: desiredTop, left: 0, behavior: 'auto' });
-    }));
-  }
-
-  function openPrimaryRoute(route) {
-    if (!primaryRoutes.has(route)) return;
-
-    const target = document.querySelector(`.view[data-view="${route}"]`);
-    if (!target) return;
-
-    document.querySelectorAll('.view').forEach(view => {
-      const active = view === target;
-      view.hidden = !active;
-      view.setAttribute('aria-hidden', active ? 'false' : 'true');
-      if (active) {
-        view.style.setProperty('display', 'block', 'important');
-      } else {
-        view.style.setProperty('display', 'none', 'important');
-      }
-    });
-
-    document.querySelectorAll('.bottom-nav .nav-button').forEach(button => {
-      const active = button.dataset.route === route;
-      button.classList.toggle('active', active);
-      if (active) button.setAttribute('aria-current', 'page');
-      else button.removeAttribute('aria-current');
-    });
-
-    try {
-      if (route === 'home' && typeof window.renderHome === 'function') window.renderHome();
-      if (route === 'followup' && typeof window.renderFollowups === 'function') window.renderFollowups();
-    } catch (error) {
-      console.error('GraxCare route render failed', error);
-    }
-
-    target.hidden = false;
-    target.setAttribute('aria-hidden', 'false');
-    target.style.setProperty('display', 'block', 'important');
-    scrollRouteIntoPosition(target);
-  }
-
+  /* Let the original V6 router perform all functional navigation. After it runs,
+     only correct the viewport position so the requested section is immediately visible. */
   document.addEventListener('click', event => {
     const button = event.target.closest?.('.bottom-nav .nav-button[data-route]');
     if (!button) return;
     const route = button.dataset.route;
-    if (!primaryRoutes.has(route)) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    openPrimaryRoute(route);
-  }, true);
+    if (!['home','followup','backup','help'].includes(route)) return;
 
-  /* Keep the first paint normalized even after restoration from Android/Chrome. */
-  window.addEventListener('pageshow', () => {
-    const active = document.querySelector('.bottom-nav .nav-button.active[data-route]');
-    if (active && primaryRoutes.has(active.dataset.route)) openPrimaryRoute(active.dataset.route);
-  }, { once: true });
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const target = document.querySelector(`.view[data-view="${route}"]`);
+      if (!target || target.hidden) return;
+      const header = document.querySelector('.app-header');
+      const headerHeight = header ? header.getBoundingClientRect().height : 0;
+      const top = target.getBoundingClientRect().top + window.scrollY - headerHeight - 8;
+      window.scrollTo({ top: Math.max(0, top), left: 0, behavior: 'auto' });
+    }));
+  });
 
-  const refreshKey = 'gcr-compact-commercial-20260807p';
+  const refreshKey = 'gcr-compact-commercial-20260807q';
   if (!('serviceWorker' in navigator)) return;
   let reloading = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
