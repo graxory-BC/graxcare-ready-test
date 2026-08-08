@@ -43,6 +43,25 @@ jobs:
             await page.goto('http://127.0.0.1:4173/v6/?ci=visual-sync-20260808d',{waitUntil:'domcontentloaded'});
             await page.waitForSelector('#situationsGrid .situation-card');
 
+            const profileId='11111111-1111-4111-8111-111111111111';
+            await page.evaluate(({profileId})=>{
+              localStorage.setItem('graxcare_ready_state_v1',JSON.stringify({
+                version:1,
+                profiles:[{
+                  id:profileId,
+                  name:'Test',relationship:'Dad',age:'',primaryContact:'',primaryPhone:'',doctor:'',pharmacy:'',hospital:'',insurance:'',
+                  allergies:'',conditions:'',medications:'',supportNeeds:'',photoDataUrl:''
+                }],
+                selectedProfileId:profileId,
+                activeSituationId:null,
+                actionProgress:{},
+                followups:[],
+                updatedAt:new Date().toISOString()
+              }));
+            },{profileId});
+            await page.reload({waitUntil:'domcontentloaded'});
+            await page.waitForSelector('#situationsGrid .situation-card[data-situation-id="urgent-care"]:not([disabled])');
+
             await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
             await page.click('#situationsGrid .situation-card[data-situation-id="urgent-care"]');
             await page.waitForTimeout(140);
