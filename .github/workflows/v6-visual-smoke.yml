@@ -30,18 +30,28 @@ jobs:
         run: |
           python3 -m http.server 4173 --directory . >/tmp/graxcare-server.log 2>&1 &
           for i in {1..20}; do curl -fsS http://127.0.0.1:4173/v6/ >/dev/null && exit 0; sleep 1; done
+          cat /tmp/graxcare-server.log
           exit 1
-      - name: Test only navigation and HQ icon
+      - name: Verify mobile navigation and rendered commercial identity
         run: |
           node <<'NODE'
           const { chromium } = require('playwright');
           const assert = require('node:assert/strict');
           (async()=>{
             const browser=await chromium.launch({headless:true});
-            const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'allow'});
+            const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:3,serviceWorkers:'allow'});
             const page=await context.newPage();
-            await page.goto('http://127.0.0.1:4173/v6/?ci=20260807q',{waitUntil:'domcontentloaded'});
+
+            await page.goto('http://127.0.0.1:4173/v6/?ci=20260807u',{waitUntil:'domcontentloaded'});
             await page.waitForSelector('#situationsGrid .situation-card');
+            await page.waitForFunction(()=>document.querySelector('.brand-logo-master')?.naturalWidth>=300);
+            const brand=await page.evaluate(()=>{
+              const image=document.querySelector('.brand-logo-master');
+              return {width:image?.naturalWidth||0,height:image?.naturalHeight||0,src:image?.currentSrc||''};
+            });
+            assert.ok(brand.width>=300&&brand.height>=300,`in-app logo is not HQ: ${brand.width}x${brand.height}`);
+            assert.ok(brand.src.startsWith('data:image/'),'in-app logo was not decoded to a verified local image');
+
             const routes=[
               ['followup','followupView','Keep the next steps organized.'],
               ['backup','backupView','Backup and restore'],
@@ -51,7 +61,7 @@ jobs:
             for(const [route,id,text] of routes){
               await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
               await page.click(`.bottom-nav .nav-button[data-route="${route}"]`);
-              await page.waitForTimeout(120);
+              await page.waitForTimeout(140);
               const state=await page.evaluate(({route,id})=>{
                 const target=document.getElementById(id);
                 const header=document.querySelector('.app-header');
@@ -71,18 +81,47 @@ jobs:
               assert.ok(state.top<=state.headerBottom+20,`${route}: section not brought into first viewport`);
               await page.getByText(text,{exact:false}).first().waitFor({state:'visible'});
             }
-            await page.goto('http://127.0.0.1:4173/v6/install.html?ci=1',{waitUntil:'domcontentloaded'});
-            const icon=await page.locator('.icon-shell img').getAttribute('src');
-            assert.ok(icon.includes('commercial-hq-20260807q'),'HQ commercial icon URL missing');
+
+            await page.goto('http://127.0.0.1:4173/v6/install.html?ci=20260807u',{waitUntil:'domcontentloaded'});
+            await page.waitForSelector('#installIcon',{state:'attached'});
+            await page.waitForFunction(()=>document.querySelector('#installIcon')?.naturalWidth>=300);
+            const install=await page.evaluate(async()=>{
+              const image=document.querySelector('#installIcon');
+              const manifest=await fetch('./manifest-commercial.webmanifest?ci=20260807u',{cache:'no-store'}).then(r=>r.json());
+              return {
+                width:image?.naturalWidth||0,
+                height:image?.naturalHeight||0,
+                src:image?.currentSrc||'',
+                broken:[...document.images].filter(img=>img.complete&&img.naturalWidth===0).length,
+                buttons:document.querySelectorAll('main.card button').length,
+                text:document.body.innerText,
+                html:document.documentElement.innerHTML,
+                manifestIcon:manifest.icons?.[0]?.src||'',
+                manifestType:manifest.icons?.[0]?.type||''
+              };
+            });
+            assert.ok(install.width>=300&&install.height>=300,`install icon is not HQ: ${install.width}x${install.height}`);
+            assert.ok(install.src.startsWith('data:image/'),'install icon is not a decoded local commercial asset');
+            assert.equal(install.broken,0,'install screen contains a broken image');
+            assert.equal(install.buttons,1,'install screen has duplicate primary actions');
+            assert.ok(!install.text.includes('Official version'),'extra install label remains visible');
+            assert.ok(!install.text.includes('Commercial identity'),'duplicated commercial proof text remains visible');
+            assert.ok(!install.html.includes('raw.githubusercontent.com'),'install screen still depends on an external raw GitHub image');
+            assert.ok(install.manifestIcon.startsWith('./assets/graxcare-app-icon.svg'),'manifest icon is not same-origin');
+            assert.equal(install.manifestType,'image/svg+xml');
+            assert.ok(!install.manifestIcon.includes('raw.githubusercontent.com'),'manifest still depends on external raw GitHub');
+
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
-      - name: Verify protected logic unchanged
+      - name: Verify protected logic and HQ source unchanged
         run: |
-          grep -q "compact-commercial-20260807q" v6/update-shell.js
           ! grep -q "stopImmediatePropagation" v6/update-shell.js
-          grep -q "commercial-hq-20260807q" v6/manifest-commercial.webmanifest
+          grep -q "commercial-hq-20260807u" v6/manifest-commercial.webmanifest
+          grep -q "commercial-hq-20260807u" v6/install.html
           grep -q 'viewBox="0 0 320 320"' v6/assets/graxcare-app-icon.svg
           test "$(wc -c < v6/assets/graxcare-app-icon.svg)" -gt 12000
+          ! grep -q "graxcare-logo-master-small.b64.txt" v6/commercial-logo.js
+          grep -q "naturalWidth < 300" v6/commercial-logo.js
           grep -q "const STORAGE_KEY = 'graxcare_ready_state_v1';" app.js
           test "$(git hash-object app.js)" = "216ad539cb5daca5c312b522dae79c3f83dae502"
