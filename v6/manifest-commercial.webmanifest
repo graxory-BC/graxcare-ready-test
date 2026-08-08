@@ -2,8 +2,8 @@
   "name": "GraxCare Ready",
   "short_name": "GraxCare Ready",
   "description": "The 60-Second Family Care Action System",
-  "id": "./graxcare-ready-commercial-20260807u",
-  "start_url": "./?install=source-master-20260807u",
+  "id": "./graxcare-ready-commercial-20260808b",
+  "start_url": "./?install=visual-sync-20260808b",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f2f4f7",
@@ -13,7 +13,7 @@
   "categories": ["medical","health","lifestyle","utilities"],
   "icons": [
     {
-      "src": "./assets/graxcare-icon-source-20260807.svg",
+      "src": "./assets/graxcare-icon-source-20260807.svg?v=visual-sync-20260808b",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"

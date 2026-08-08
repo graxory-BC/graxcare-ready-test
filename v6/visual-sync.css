@@ -1,0 +1,100 @@
+/* GraxCare Ready — cross-device visual synchronization.
+   Visual-only layer: preserves V6 behavior, data, routing and approved icon artwork. */
+
+:root{
+  --gcr-navy:#061b3a;
+  --gcr-navy-2:#0d2147;
+  --gcr-teal:#087c76;
+  --gcr-gold:#c89527;
+  --gcr-page:#f3f6fa;
+  --gcr-ink:#0d1b3d;
+}
+
+/* Keep the approved logo crisp and proportional everywhere. */
+.brand-logo-master{
+  image-rendering:auto!important;
+  object-fit:contain!important;
+  object-position:center!important;
+}
+
+/* V6 cards use one visual grammar on phone, tablet and desktop. */
+@media(min-width:720px){
+  html body #situationsGrid .situation-card{
+    display:grid!important;
+    grid-template-columns:48px minmax(0,1fr)!important;
+    grid-template-rows:1fr!important;
+    align-items:center!important;
+    justify-items:start!important;
+    min-height:96px!important;
+    padding:10px!important;
+    gap:9px!important;
+    border-radius:16px!important;
+    text-align:left!important;
+  }
+  html body #situationsGrid .situation-icon{
+    width:46px!important;
+    height:46px!important;
+    flex:0 0 46px!important;
+    border-radius:13px!important;
+  }
+  html body #situationsGrid .situation-icon::before{
+    width:30px!important;
+    height:30px!important;
+  }
+  html body #situationsGrid .situation-card strong{
+    margin:0!important;
+    font-size:11.5px!important;
+    line-height:1.17!important;
+    font-weight:850!important;
+    overflow-wrap:normal!important;
+    word-break:normal!important;
+  }
+  html body #situationsGrid .situation-card::after{
+    top:10px!important;
+    right:10px!important;
+  }
+}
+
+@media(min-width:1100px){
+  html body #situationsGrid .situation-card{
+    min-height:100px!important;
+    padding:11px!important;
+    gap:10px!important;
+  }
+  html body #situationsGrid .situation-card strong{
+    font-size:12px!important;
+    line-height:1.18!important;
+  }
+}
+
+/* Make desktop panels feel like the same product rather than a separate layout. */
+@media(min-width:720px){
+  html body .hero-card,
+  html body .panel,
+  html body .bottom-nav{
+    border-radius:20px!important;
+  }
+  html body .hero-card{
+    background-color:var(--gcr-navy)!important;
+  }
+  html body .panel{
+    box-shadow:0 9px 24px rgba(13,27,61,.08)!important;
+  }
+}
+
+/* Keep all four real navigation destinations visually identical across devices. */
+html body .bottom-nav .nav-button{
+  -webkit-tap-highlight-color:transparent!important;
+}
+html body .bottom-nav .nav-button span{
+  display:grid!important;
+  place-items:center!important;
+}
+
+/* Shopify capture mode: exact V6 product visual, no browser-specific motion. */
+html[data-shopify-capture="1"] *,
+html[data-shopify-capture="1"] *::before,
+html[data-shopify-capture="1"] *::after{
+  animation:none!important;
+  transition:none!important;
+}
