@@ -11,8 +11,19 @@ html.gcr-logo-ready .brand-copy{display:none!important}
   html.gcr-logo-ready .app-header{justify-content:flex-end!important}
   html.gcr-logo-ready .bottom-nav{padding-top:132px!important}
   html.gcr-logo-ready .bottom-nav:before{
-    content:""!important;top:14px!important;left:16px!important;right:16px!important;height:106px!important;
-    background-image:var(--gcr-logo-image)!important;background-repeat:no-repeat!important;background-position:center!important;background-size:contain!important;
+    content:""!important;
+    top:14px!important;
+    left:16px!important;
+    right:16px!important;
+    height:106px!important;
+    background-color:#fff!important;
+    background-image:var(--gcr-logo-image)!important;
+    background-repeat:no-repeat!important;
+    background-position:center!important;
+    background-size:calc(100% - 18px) auto!important;
+    border:1px solid rgba(6,27,58,.10)!important;
+    border-radius:18px!important;
+    box-shadow:0 10px 24px rgba(6,27,58,.14)!important;
   }
 }
 @media print{.brand-logo-master{display:none!important}}
