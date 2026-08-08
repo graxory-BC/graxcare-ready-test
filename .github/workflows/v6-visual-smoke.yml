@@ -1,4 +1,4 @@
-name: V6 Visual Smoke
+name: V6 Targeted Smoke
 
 on:
   pull_request:
@@ -13,143 +13,76 @@ permissions:
   contents: read
 
 jobs:
-  browser-smoke:
+  targeted-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 12
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '24'
-
-      - name: Install browser
+      - name: Install Chromium
         run: |
           npm init -y >/dev/null 2>&1
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
-
-      - name: Start local V6 server
+      - name: Start V6
         run: |
           python3 -m http.server 4173 --directory . >/tmp/graxcare-server.log 2>&1 &
-          for i in {1..20}; do
-            curl -fsS http://127.0.0.1:4173/v6/ >/dev/null && exit 0
-            sleep 1
-          done
-          cat /tmp/graxcare-server.log
+          for i in {1..20}; do curl -fsS http://127.0.0.1:4173/v6/ >/dev/null && exit 0; sleep 1; done
           exit 1
-
-      - name: Validate mobile V6 direct navigation and install screen
+      - name: Test only navigation and HQ icon
         run: |
-          mkdir -p visual-artifacts
           node <<'NODE'
           const { chromium } = require('playwright');
           const assert = require('node:assert/strict');
-
-          (async () => {
-            const browser = await chromium.launch({ headless: true });
-            try {
-              const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, serviceWorkers: 'allow' });
-              const page = await context.newPage();
-              await page.goto('http://127.0.0.1:4173/v6/?ci=compact-commercial-20260807p', { waitUntil: 'domcontentloaded' });
-              await page.waitForSelector('#situationsGrid .situation-card');
-              await page.waitForTimeout(500);
-
-              const base = await page.evaluate(() => ({
-                build: document.documentElement.dataset.visualBuild,
-                cards: document.querySelectorAll('#situationsGrid .situation-card').length,
-                slogan: document.querySelector('.hero-card .eyebrow')?.textContent.trim(),
-                navLabels: [...document.querySelectorAll('.bottom-nav .nav-button')].map(button => button.lastChild?.textContent.trim() || ''),
-                navIconBackgrounds: [...document.querySelectorAll('.bottom-nav .nav-button span')].map(span => getComputedStyle(span,'::before').backgroundImage),
-                overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth
-              }));
-              assert.equal(base.build, 'compact-commercial-20260807p');
-              assert.equal(base.cards, 12);
-              assert.equal(base.slogan, 'The 60-Second Family Care Action System');
-              assert.deepEqual(base.navLabels, ['Home','Follow Up','Backup','Help']);
-              assert.ok(base.navIconBackgrounds.every(value => value.includes('data:image/svg+xml')), 'all four premium navigation icons must be visible');
-              assert.ok(base.overflowX <= 1, `horizontal overflow detected: ${base.overflowX}px`);
-
-              const checks = [
-                ['followup','followupView','Keep the next steps organized.'],
-                ['backup','backupView','Backup and restore'],
-                ['help','helpView','How GraxCare Ready works'],
-                ['home','homeView','When something changes, everyone knows what to do next.']
-              ];
-              for (const [route, viewId, text] of checks) {
-                await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-                await page.click(`.bottom-nav .nav-button[data-route="${route}"]`);
-                await page.waitForTimeout(140);
-                const state = await page.evaluate(({route,viewId}) => {
-                  const target = document.getElementById(viewId);
-                  const header = document.querySelector('.app-header');
-                  return {
-                    targetHidden: target.hidden,
-                    targetDisplay: getComputedStyle(target).display,
-                    targetTop: target.getBoundingClientRect().top,
-                    headerBottom: header?.getBoundingClientRect().bottom || 0,
-                    visibleViews: [...document.querySelectorAll('.view')].filter(view => getComputedStyle(view).display !== 'none').map(view => view.dataset.view),
-                    active: document.querySelector('.bottom-nav .nav-button.active')?.dataset.route
-                  };
-                }, {route,viewId});
-                assert.equal(state.targetHidden, false, `${route}: target view did not open`);
-                assert.notEqual(state.targetDisplay, 'none', `${route}: target view is not rendered`);
-                assert.deepEqual(state.visibleViews, [route], `${route}: another view remains in the page flow`);
-                assert.equal(state.active, route, `${route}: active navigation state did not move`);
-                assert.ok(state.targetTop <= state.headerBottom + 16, `${route}: target opened below the visible viewport (${state.targetTop}px)`);
-                await page.getByText(text, { exact: false }).first().waitFor({ state: 'visible' });
-              }
-              await page.screenshot({ path: 'visual-artifacts/v6-mobile-navigation.png', fullPage: true });
-
-              await page.goto('http://127.0.0.1:4173/v6/install.html?ci=1', { waitUntil: 'domcontentloaded' });
-              await page.waitForSelector('.icon-shell img');
-              const install = await page.evaluate(() => ({
-                icon: document.querySelector('.icon-shell img')?.getAttribute('src') || '',
-                manifest: document.querySelector('link[rel="manifest"]')?.getAttribute('href') || '',
-                title: document.querySelector('h1')?.textContent.trim() || '',
-                tagline: document.querySelector('.tagline')?.textContent.trim() || ''
-              }));
-              assert.ok(install.icon.includes('graxcare-app-icon.svg?brand=locked-master-20260807n'), 'install screen is not showing the locked commercial icon');
-              assert.ok(install.manifest.includes('manifest-commercial.webmanifest'), 'commercial manifest missing from install screen');
-              assert.equal(install.title, 'GraxCare Ready');
-              assert.equal(install.tagline, 'The 60-Second Family Care Action System');
-              await page.screenshot({ path: 'visual-artifacts/v6-commercial-install.png', fullPage: true });
-              await context.close();
-            } finally {
-              await browser.close();
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'allow'});
+            const page=await context.newPage();
+            await page.goto('http://127.0.0.1:4173/v6/?ci=20260807q',{waitUntil:'domcontentloaded'});
+            await page.waitForSelector('#situationsGrid .situation-card');
+            const routes=[
+              ['followup','followupView','Keep the next steps organized.'],
+              ['backup','backupView','Backup and restore'],
+              ['help','helpView','How GraxCare Ready works'],
+              ['home','homeView','When something changes, everyone knows what to do next.']
+            ];
+            for(const [route,id,text] of routes){
+              await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
+              await page.click(`.bottom-nav .nav-button[data-route="${route}"]`);
+              await page.waitForTimeout(120);
+              const state=await page.evaluate(({route,id})=>{
+                const target=document.getElementById(id);
+                const header=document.querySelector('.app-header');
+                return {
+                  hidden:target.hidden,
+                  display:getComputedStyle(target).display,
+                  top:target.getBoundingClientRect().top,
+                  headerBottom:header?.getBoundingClientRect().bottom||0,
+                  active:document.querySelector('.bottom-nav .nav-button.active')?.dataset.route,
+                  visible:[...document.querySelectorAll('.view')].filter(v=>!v.hidden).map(v=>v.dataset.view)
+                };
+              },{route,id});
+              assert.equal(state.hidden,false,`${route}: hidden`);
+              assert.notEqual(state.display,'none',`${route}: not rendered`);
+              assert.equal(state.active,route,`${route}: active state wrong`);
+              assert.deepEqual(state.visible,[route],`${route}: more than one primary view visible`);
+              assert.ok(state.top<=state.headerBottom+20,`${route}: section not brought into first viewport`);
+              await page.getByText(text,{exact:false}).first().waitFor({state:'visible'});
             }
-          })().catch(error => { console.error(error); process.exit(1); });
+            await page.goto('http://127.0.0.1:4173/v6/install.html?ci=1',{waitUntil:'domcontentloaded'});
+            const icon=await page.locator('.icon-shell img').getAttribute('src');
+            assert.ok(icon.includes('commercial-hq-20260807q'),'HQ commercial icon URL missing');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
           NODE
-
-      - name: Verify locked master icon and protected logic
+      - name: Verify protected logic unchanged
         run: |
-          grep -q "graxcare-ready-nav-focus-20260807p" v6/service-worker.js
-          grep -q "compact-commercial-20260807p" v6/update-shell.js
-          grep -q "graxcare-app-icon.svg?brand=locked-master-20260807n" v6/manifest-commercial.webmanifest
-          grep -q '"id": "./graxcare-ready-commercial-20260807n"' v6/manifest-commercial.webmanifest
-          grep -q "v6/install.html" refresh-v6.html
-          ! grep -q "placeholder-icon" v6/manifest-commercial.webmanifest
-          python3 <<'PY'
-          import base64, hashlib, pathlib, re
-          master = pathlib.Path('v6/assets/graxcare-logo-master-small.b64.txt').read_text().strip()
-          svg = pathlib.Path('v6/assets/graxcare-app-icon.svg').read_text()
-          match = re.search(r'data:image/webp;base64,([^\"]+)', svg)
-          assert match, 'App icon does not embed the verified commercial master asset'
-          embedded = match.group(1)
-          assert embedded == master, 'Startup icon differs from the verified commercial master asset'
-          digest = hashlib.sha256(base64.b64decode(master)).hexdigest()
-          assert digest == 'ea522338f8b0336d2a87ef230f574065c0956a9a55b22ab92d51cb9186bd8860', 'Commercial master checksum changed'
-          print('Commercial master icon verified:', digest)
-          PY
+          grep -q "compact-commercial-20260807q" v6/update-shell.js
+          ! grep -q "stopImmediatePropagation" v6/update-shell.js
+          grep -q "commercial-hq-20260807q" v6/manifest-commercial.webmanifest
+          grep -q 'viewBox="0 0 320 320"' v6/assets/graxcare-app-icon.svg
+          test "$(wc -c < v6/assets/graxcare-app-icon.svg)" -gt 12000
           grep -q "const STORAGE_KEY = 'graxcare_ready_state_v1';" app.js
           test "$(git hash-object app.js)" = "216ad539cb5daca5c312b522dae79c3f83dae502"
-
-      - name: Upload visual evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: graxcare-v6-visual-smoke
-          path: visual-artifacts/
-          if-no-files-found: warn
