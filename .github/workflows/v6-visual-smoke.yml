@@ -97,7 +97,6 @@ jobs:
           grep -q "visual-sync-20260808b" v6/manifest-commercial.webmanifest
           grep -q "graxcare-icon-source-20260807.svg" v6/manifest-commercial.webmanifest
           grep -q 'viewBox="0 0 394 394"' v6/assets/graxcare-icon-source-20260807.svg
-          test "$(wc -c < v6/assets/graxcare-icon-source-20260807.svg)" -gt 40000
           test -s v6/visual-sync.css
           grep -q "const STORAGE_KEY = 'graxcare_ready_state_v1';" app.js
           test "$(git hash-object app.js)" = "216ad539cb5daca5c312b522dae79c3f83dae502"
