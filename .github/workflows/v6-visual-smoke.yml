@@ -44,7 +44,24 @@ jobs:
 
             await page.goto('http://127.0.0.1:4173/v6/?ci=20260807u',{waitUntil:'domcontentloaded'});
             await page.waitForSelector('#situationsGrid .situation-card');
-            await page.waitForFunction(()=>document.querySelector('.brand-logo-master')?.naturalWidth>=300);
+            const sourceDiagnostic=await page.evaluate(async()=>{
+              try{
+                const response=await fetch('./assets/graxcare-app-icon.svg?brand=ci',{cache:'no-store'});
+                const svg=await response.text();
+                const match=svg.match(/href=["'](data:image\/(?:webp|png|jpeg);base64,[^"']+)["']/i);
+                if(!match) return {status:response.status,length:svg.length,matched:false};
+                const image=new Image();
+                image.src=match[1];
+                try{await image.decode();}catch(error){return {status:response.status,length:svg.length,matched:true,decodeError:String(error)}}
+                return {status:response.status,length:svg.length,matched:true,width:image.naturalWidth,height:image.naturalHeight};
+              }catch(error){return {fetchError:String(error)}}
+            });
+            console.log('Commercial source diagnostic:',sourceDiagnostic);
+            assert.equal(sourceDiagnostic.status,200,'commercial icon source request failed');
+            assert.equal(sourceDiagnostic.matched,true,'commercial icon SVG does not contain embedded image data');
+            assert.ok(sourceDiagnostic.width>=300&&sourceDiagnostic.height>=300,`commercial icon source is not HQ: ${JSON.stringify(sourceDiagnostic)}`);
+
+            await page.waitForFunction(()=>document.querySelector('.brand-logo-master')?.naturalWidth>=300,{timeout:5000});
             const brand=await page.evaluate(()=>{
               const image=document.querySelector('.brand-logo-master');
               return {width:image?.naturalWidth||0,height:image?.naturalHeight||0,src:image?.currentSrc||''};
@@ -83,8 +100,8 @@ jobs:
             }
 
             await page.goto('http://127.0.0.1:4173/v6/install.html?ci=20260807u',{waitUntil:'domcontentloaded'});
-            await page.waitForSelector('#installIcon',{state:'attached'});
-            await page.waitForFunction(()=>document.querySelector('#installIcon')?.naturalWidth>=300);
+            await page.waitForSelector('#installIcon',{state:'attached',timeout:5000});
+            await page.waitForFunction(()=>document.querySelector('#installIcon')?.naturalWidth>=300,{timeout:5000});
             const install=await page.evaluate(async()=>{
               const image=document.querySelector('#installIcon');
               const manifest=await fetch('./manifest-commercial.webmanifest?ci=20260807u',{cache:'no-store'}).then(r=>r.json());
