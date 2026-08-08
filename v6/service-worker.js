@@ -1,15 +1,18 @@
-const CACHE = 'graxcare-ready-visual-sync-20260808b';
+const CACHE = 'graxcare-ready-visual-sync-20260808c';
 const APP_SHELL = [
   './',
   './index.html',
   './install.html',
-  './manifest-commercial.webmanifest?r=visual-sync-20260808b',
-  './assets/graxcare-icon-source-20260807.svg?v=visual-sync-20260808b',
+  './manifest-commercial.webmanifest?r=visual-sync-20260808c',
+  './assets/graxcare-logo-source.webp?v=visual-sync-20260808c',
+  './assets/graxcare-icon-192.png?v=visual-sync-20260808c',
+  './assets/graxcare-icon-512.png?v=visual-sync-20260808c',
+  './assets/graxcare-icon-1024.png?v=visual-sync-20260808c',
   './visual-v6.css?r=compact-commercial-20260807m',
   './visual-sync.css?r=visual-sync-20260808a',
   './premium-icon-art.css?r=compact-commercial-20260807m',
   './commercial-logo.css?r=visual-sync-20260808a',
-  './commercial-logo.js?r=visual-sync-20260808b',
+  './commercial-logo.js?r=visual-sync-20260808c',
   './update-shell.js?r=visual-sync-20260808a',
   '../styles.css?r=compact-commercial-20260807m',
   '../visual-final.css?r=compact-commercial-20260807m',
