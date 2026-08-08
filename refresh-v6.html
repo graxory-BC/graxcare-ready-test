@@ -21,9 +21,9 @@
       try{
         if('serviceWorker' in navigator){const registrations=await navigator.serviceWorker.getRegistrations();await Promise.all(registrations.filter(r=>r.scope.includes('/graxcare-ready-test/v6/')).map(r=>r.unregister()));}
         if('caches' in window){const keys=await caches.keys();await Promise.all(keys.filter(k=>k.startsWith('graxcare-ready-')).map(k=>caches.delete(k)));}
-        ['gcr-visual-lock-20260806d','gcr-premium-direct-20260806f','gcr-premium-reset-20260806g','gcr-premium-inline-20260807h','gcr-premium-accessibility-20260807i','gcr-premium-accessibility-final-20260807j','gcr-premium-balance-20260807k','gcr-premium-balance-final-20260807k2','gcr-approved-sync-20260807l','gcr-compact-commercial-20260807m','gcr-commercial-icon-20260807n','gcr-compact-commercial-20260807o','gcr-compact-commercial-20260807p','gcr-compact-commercial-20260807q','gcr-compact-commercial-20260807r','gcr-compact-commercial-20260807s','gcr-compact-commercial-20260807t','gcr-source-master-20260807u','gcr-visual-sync-20260808a','gcr-visual-sync-20260808b'].forEach(k=>sessionStorage.removeItem(k));
+        ['gcr-visual-lock-20260806d','gcr-premium-direct-20260806f','gcr-premium-reset-20260806g','gcr-premium-inline-20260807h','gcr-premium-accessibility-20260807i','gcr-premium-accessibility-final-20260807j','gcr-premium-balance-20260807k','gcr-premium-balance-final-20260807k2','gcr-approved-sync-20260807l','gcr-compact-commercial-20260807m','gcr-commercial-icon-20260807n','gcr-compact-commercial-20260807o','gcr-compact-commercial-20260807p','gcr-compact-commercial-20260807q','gcr-compact-commercial-20260807r','gcr-compact-commercial-20260807s','gcr-compact-commercial-20260807t','gcr-source-master-20260807u','gcr-visual-sync-20260808a','gcr-visual-sync-20260808b','gcr-visual-sync-20260808c'].forEach(k=>sessionStorage.removeItem(k));
         status.textContent='Update completed. Opening GraxCare Ready…';
-        const target='./v6/install.html?build=visual-sync-20260808b&clean='+Date.now();
+        const target='./v6/install.html?build=visual-sync-20260808c&clean='+Date.now();
         setTimeout(()=>location.replace(target),250);
       }catch(error){status.className='error';status.textContent='The automatic refresh could not finish. Reload this page once.';}
     })();
