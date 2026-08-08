@@ -1,11 +1,22 @@
 (() => {
   'use strict';
 
-  document.documentElement.dataset.visualBuild = 'compact-commercial-20260807q';
+  document.documentElement.dataset.visualBuild = 'compact-commercial-20260807r';
   const style = document.createElement('style');
-  style.id = 'gcr-compact-commercial-q';
+  style.id = 'gcr-compact-commercial-r';
   style.textContent = `
-    html body .view[hidden]{display:none!important}
+    /* Root-cause fix: V6 phone CSS forces #homeView to display:grid!important.
+       These selectors are intentionally more specific so hidden views actually leave the layout. */
+    html body #homeView[hidden],
+    html body #actionView[hidden],
+    html body #followupView[hidden],
+    html body #backupView[hidden],
+    html body #helpView[hidden],
+    html.phone-ui body #homeView[hidden],
+    html.phone-ui body #actionView[hidden],
+    html.phone-ui body #followupView[hidden],
+    html.phone-ui body #backupView[hidden],
+    html.phone-ui body #helpView[hidden]{display:none!important}
 
     @media(max-width:719px){
       html body #situationsGrid.situations-grid{
@@ -89,25 +100,17 @@
   `;
   document.head.appendChild(style);
 
-  /* Let the original V6 router perform all functional navigation. After it runs,
-     only correct the viewport position so the requested section is immediately visible. */
+  /* V6 app.js remains the only router. We only cancel its smooth-scroll animation
+     after a route-changing tap so the selected view is visible immediately. */
   document.addEventListener('click', event => {
-    const button = event.target.closest?.('.bottom-nav .nav-button[data-route]');
-    if (!button) return;
-    const route = button.dataset.route;
-    if (!['home','followup','backup','help'].includes(route)) return;
-
+    const trigger = event.target.closest?.('.situation-card[data-situation-id], [data-route]');
+    if (!trigger) return;
     requestAnimationFrame(() => requestAnimationFrame(() => {
-      const target = document.querySelector(`.view[data-view="${route}"]`);
-      if (!target || target.hidden) return;
-      const header = document.querySelector('.app-header');
-      const headerHeight = header ? header.getBoundingClientRect().height : 0;
-      const top = target.getBoundingClientRect().top + window.scrollY - headerHeight - 8;
-      window.scrollTo({ top: Math.max(0, top), left: 0, behavior: 'auto' });
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     }));
   });
 
-  const refreshKey = 'gcr-compact-commercial-20260807q';
+  const refreshKey = 'gcr-compact-commercial-20260807r';
   if (!('serviceWorker' in navigator)) return;
   let reloading = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
