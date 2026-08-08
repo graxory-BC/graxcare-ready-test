@@ -4,7 +4,7 @@
   const brand = document.querySelector('.brand');
   if (!brand) return;
 
-  const src = './assets/graxcare-icon-source-20260807.svg?v=visual-sync-20260808a';
+  const src = './assets/graxcare-icon-source-20260807.svg?v=visual-sync-20260808b';
   const image = new Image();
   image.className = 'brand-logo-master';
   image.alt = 'GraxCare Ready';
