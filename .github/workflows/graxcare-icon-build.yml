@@ -1,0 +1,64 @@
+name: GraxCare icon build
+
+on:
+  push:
+    branches:
+      - agent/graxcare-install-icon-final-fix
+    paths:
+      - '.github/workflows/graxcare-icon-build.yml'
+      - 'v6/assets/graxcare-icon-source-20260807.svg'
+
+permissions:
+  contents: write
+
+jobs:
+  build-icons:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/graxcare-install-icon-final-fix
+
+      - name: Build real PNG icons
+        shell: python
+        run: |
+          import base64, io, re
+          from pathlib import Path
+          from PIL import Image
+
+          svg = Path('v6/assets/graxcare-icon-source-20260807.svg').read_text(encoding='utf-8')
+          match = re.search(r'data:image/webp;base64,([A-Za-z0-9+/=]+)', svg)
+          if not match:
+              raise SystemExit('Embedded GraxCare source not found')
+
+          raw = base64.b64decode(match.group(1), validate=True)
+          source = Image.open(io.BytesIO(raw)).convert('RGBA')
+          if source.size != (394, 347):
+              raise SystemExit(f'Unexpected source size: {source.size}')
+
+          def on_white(size):
+              canvas = Image.new('RGBA', (size, size), (255,255,255,255))
+              target_w = round(size * 0.90)
+              target_h = round(source.height * target_w / source.width)
+              resized = source.resize((target_w, target_h), Image.Resampling.LANCZOS)
+              canvas.alpha_composite(resized, ((size-target_w)//2, (size-target_h)//2))
+              return canvas.convert('RGB')
+
+          out = Path('v6/assets')
+          for size in (192, 512):
+              target = out / f'graxcare-icon-{size}.png'
+              on_white(size).save(target, 'PNG', optimize=True)
+              check = Image.open(target)
+              if check.format != 'PNG' or check.size != (size, size):
+                  raise SystemExit(f'Invalid PNG: {target}')
+              print(target, check.size, target.stat().st_size)
+
+      - name: Commit validated PNG icons
+        run: |
+          git config user.name "GraxCare Build"
+          git config user.email "actions@users.noreply.github.com"
+          git add v6/assets/graxcare-icon-192.png v6/assets/graxcare-icon-512.png
+          git diff --cached --quiet && exit 0
+          git commit -m "Add real PNG install icons"
+          git push origin HEAD:agent/graxcare-install-icon-final-fix
