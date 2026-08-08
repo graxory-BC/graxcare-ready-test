@@ -31,7 +31,7 @@ jobs:
           python3 -m http.server 4173 --directory . >/tmp/graxcare-server.log 2>&1 &
           for i in {1..20}; do curl -fsS http://127.0.0.1:4173/v6/ >/dev/null && exit 0; sleep 1; done
           exit 1
-      - name: Test only navigation and HQ icon
+      - name: Test navigation and approved rendered icon
         run: |
           node <<'NODE'
           const { chromium } = require('playwright');
@@ -40,7 +40,7 @@ jobs:
             const browser=await chromium.launch({headless:true});
             const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'allow'});
             const page=await context.newPage();
-            await page.goto('http://127.0.0.1:4173/v6/?ci=20260807q',{waitUntil:'domcontentloaded'});
+            await page.goto('http://127.0.0.1:4173/v6/?ci=visual-sync-20260808b',{waitUntil:'domcontentloaded'});
             await page.waitForSelector('#situationsGrid .situation-card');
             const routes=[
               ['followup','followupView','Keep the next steps organized.'],
@@ -71,18 +71,33 @@ jobs:
               assert.ok(state.top<=state.headerBottom+20,`${route}: section not brought into first viewport`);
               await page.getByText(text,{exact:false}).first().waitFor({state:'visible'});
             }
-            await page.goto('http://127.0.0.1:4173/v6/install.html?ci=1',{waitUntil:'domcontentloaded'});
-            const icon=await page.locator('.icon-shell img').getAttribute('src');
-            assert.ok(icon.includes('commercial-hq-20260807q'),'HQ commercial icon URL missing');
+
+            const headerLogo=page.locator('.brand-logo-master');
+            await headerLogo.waitFor({state:'visible'});
+            const headerLogoState=await headerLogo.evaluate(img=>({complete:img.complete,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,src:img.getAttribute('src')}));
+            assert.equal(headerLogoState.complete,true,'Header logo did not finish loading');
+            assert.ok(headerLogoState.naturalWidth>0 && headerLogoState.naturalHeight>0,'Header logo did not render');
+            assert.ok(headerLogoState.src.includes('graxcare-icon-source-20260807.svg'),'Header logo is not using approved local source');
+
+            await page.goto('http://127.0.0.1:4173/v6/install.html?ci=visual-sync-20260808b',{waitUntil:'domcontentloaded'});
+            const icon=page.locator('img.logo');
+            await icon.waitFor({state:'visible'});
+            const iconState=await icon.evaluate(img=>({complete:img.complete,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,src:img.getAttribute('src')}));
+            assert.equal(iconState.complete,true,'Install icon did not finish loading');
+            assert.ok(iconState.naturalWidth>0 && iconState.naturalHeight>0,'Install icon did not render');
+            assert.ok(iconState.src.includes('graxcare-icon-source-20260807.svg'),'Approved local icon source missing');
+            assert.ok(iconState.src.includes('visual-sync-20260808b'),'Fresh visual icon identity missing');
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
       - name: Verify protected logic unchanged
         run: |
-          grep -q "compact-commercial-20260807q" v6/update-shell.js
+          grep -q "compact-commercial-20260807r" v6/update-shell.js
           ! grep -q "stopImmediatePropagation" v6/update-shell.js
-          grep -q "commercial-hq-20260807q" v6/manifest-commercial.webmanifest
-          grep -q 'viewBox="0 0 320 320"' v6/assets/graxcare-app-icon.svg
-          test "$(wc -c < v6/assets/graxcare-app-icon.svg)" -gt 12000
+          grep -q "visual-sync-20260808b" v6/manifest-commercial.webmanifest
+          grep -q "graxcare-icon-source-20260807.svg" v6/manifest-commercial.webmanifest
+          grep -q 'viewBox="0 0 394 394"' v6/assets/graxcare-icon-source-20260807.svg
+          test "$(wc -c < v6/assets/graxcare-icon-source-20260807.svg)" -gt 40000
+          test -s v6/visual-sync.css
           grep -q "const STORAGE_KEY = 'graxcare_ready_state_v1';" app.js
           test "$(git hash-object app.js)" = "216ad539cb5daca5c312b522dae79c3f83dae502"
