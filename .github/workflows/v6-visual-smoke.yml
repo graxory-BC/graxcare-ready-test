@@ -41,7 +41,7 @@ jobs:
           cat /tmp/graxcare-server.log
           exit 1
 
-      - name: Validate mobile V6 navigation and install screen
+      - name: Validate mobile V6 direct navigation and install screen
         run: |
           mkdir -p visual-artifacts
           node <<'NODE'
@@ -53,7 +53,7 @@ jobs:
             try {
               const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, serviceWorkers: 'allow' });
               const page = await context.newPage();
-              await page.goto('http://127.0.0.1:4173/v6/?ci=compact-commercial-20260807o', { waitUntil: 'domcontentloaded' });
+              await page.goto('http://127.0.0.1:4173/v6/?ci=compact-commercial-20260807p', { waitUntil: 'domcontentloaded' });
               await page.waitForSelector('#situationsGrid .situation-card');
               await page.waitForTimeout(500);
 
@@ -65,7 +65,7 @@ jobs:
                 navIconBackgrounds: [...document.querySelectorAll('.bottom-nav .nav-button span')].map(span => getComputedStyle(span,'::before').backgroundImage),
                 overflowX: document.documentElement.scrollWidth - document.documentElement.clientWidth
               }));
-              assert.equal(base.build, 'compact-commercial-20260807o');
+              assert.equal(base.build, 'compact-commercial-20260807p');
               assert.equal(base.cards, 12);
               assert.equal(base.slogan, 'The 60-Second Family Care Action System');
               assert.deepEqual(base.navLabels, ['Home','Follow Up','Backup','Help']);
@@ -79,16 +79,26 @@ jobs:
                 ['home','homeView','When something changes, everyone knows what to do next.']
               ];
               for (const [route, viewId, text] of checks) {
+                await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
                 await page.click(`.bottom-nav .nav-button[data-route="${route}"]`);
-                await page.waitForTimeout(80);
-                const state = await page.evaluate(({route,viewId}) => ({
-                  targetHidden: document.getElementById(viewId).hidden,
-                  visibleViews: [...document.querySelectorAll('.view')].filter(view => !view.hidden).map(view => view.dataset.view),
-                  active: document.querySelector('.bottom-nav .nav-button.active')?.dataset.route
-                }), {route,viewId});
+                await page.waitForTimeout(140);
+                const state = await page.evaluate(({route,viewId}) => {
+                  const target = document.getElementById(viewId);
+                  const header = document.querySelector('.app-header');
+                  return {
+                    targetHidden: target.hidden,
+                    targetDisplay: getComputedStyle(target).display,
+                    targetTop: target.getBoundingClientRect().top,
+                    headerBottom: header?.getBoundingClientRect().bottom || 0,
+                    visibleViews: [...document.querySelectorAll('.view')].filter(view => getComputedStyle(view).display !== 'none').map(view => view.dataset.view),
+                    active: document.querySelector('.bottom-nav .nav-button.active')?.dataset.route
+                  };
+                }, {route,viewId});
                 assert.equal(state.targetHidden, false, `${route}: target view did not open`);
-                assert.deepEqual(state.visibleViews, [route], `${route}: wrong visible view`);
+                assert.notEqual(state.targetDisplay, 'none', `${route}: target view is not rendered`);
+                assert.deepEqual(state.visibleViews, [route], `${route}: another view remains in the page flow`);
                 assert.equal(state.active, route, `${route}: active navigation state did not move`);
+                assert.ok(state.targetTop <= state.headerBottom + 16, `${route}: target opened below the visible viewport (${state.targetTop}px)`);
                 await page.getByText(text, { exact: false }).first().waitFor({ state: 'visible' });
               }
               await page.screenshot({ path: 'visual-artifacts/v6-mobile-navigation.png', fullPage: true });
@@ -115,8 +125,8 @@ jobs:
 
       - name: Verify locked master icon and protected logic
         run: |
-          grep -q "graxcare-ready-nav-install-20260807o" v6/service-worker.js
-          grep -q "compact-commercial-20260807o" v6/update-shell.js
+          grep -q "graxcare-ready-nav-focus-20260807p" v6/service-worker.js
+          grep -q "compact-commercial-20260807p" v6/update-shell.js
           grep -q "graxcare-app-icon.svg?brand=locked-master-20260807n" v6/manifest-commercial.webmanifest
           grep -q '"id": "./graxcare-ready-commercial-20260807n"' v6/manifest-commercial.webmanifest
           grep -q "v6/install.html" refresh-v6.html
