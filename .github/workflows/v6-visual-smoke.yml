@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   targeted-smoke:
@@ -18,9 +18,23 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          ref: ${{ github.head_ref || github.ref_name }}
+      - name: Materialize verified PNG icons once
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ ! -f v6/assets/graxcare-icon-512.png ] || [ ! -f v6/assets/graxcare-icon-192.png ]; then
+            cat v6/assets/_verified_icon_parts/part*.b64 | tr -d '\n\r ' | base64 -d > v6/assets/graxcare-icon-512.png
+            echo '433a1b654fac90b9ec8b8b8cf82e8388f213d47f0b1fe82bc79eae154d8c20d4  v6/assets/graxcare-icon-512.png' | sha256sum -c -
+            convert v6/assets/graxcare-icon-512.png -filter Lanczos -resize 192x192 v6/assets/graxcare-icon-192.png
+            test "$(identify -format '%wx%h' v6/assets/graxcare-icon-512.png)" = '512x512'
+            test "$(identify -format '%wx%h' v6/assets/graxcare-icon-192.png)" = '192x192'
+            git config user.name 'GraxCare Build'
+            git config user.email 'actions@users.noreply.github.com'
+            git add v6/assets/graxcare-icon-512.png v6/assets/graxcare-icon-192.png
+            git commit -m 'Add verified commercial PNG icons'
+            git push origin HEAD:${{ github.head_ref }}
+          fi
       - name: Verify binary icon files
         run: |
           test -f v6/assets/graxcare-icon-512.png
@@ -28,6 +42,9 @@ jobs:
           echo '433a1b654fac90b9ec8b8b8cf82e8388f213d47f0b1fe82bc79eae154d8c20d4  v6/assets/graxcare-icon-512.png' | sha256sum -c -
           file v6/assets/graxcare-icon-512.png | grep -q 'PNG image data, 512 x 512'
           file v6/assets/graxcare-icon-192.png | grep -q 'PNG image data, 192 x 192'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - name: Install Chromium
         run: |
           npm init -y >/dev/null 2>&1
