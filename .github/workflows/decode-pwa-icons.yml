@@ -3,7 +3,7 @@ name: Decode PWA icons
 on:
   push:
     branches:
-      - agent/graxcare-nav-png-final
+      - agent/graxcare-install-premium-fix
     paths:
       - 'v6/assets/graxcare-icon-*.png.b64'
 
@@ -16,18 +16,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: agent/graxcare-nav-png-final
-      - name: Decode real PNG icons
+          ref: agent/graxcare-install-premium-fix
+      - name: Decode verified PNG icons
         run: |
           base64 -d v6/assets/graxcare-icon-192.png.b64 > v6/assets/graxcare-icon-192.png
           base64 -d v6/assets/graxcare-icon-512.png.b64 > v6/assets/graxcare-icon-512.png
+          base64 -d v6/assets/graxcare-icon-1024.png.b64 > v6/assets/graxcare-icon-1024.png
           file v6/assets/graxcare-icon-192.png
           file v6/assets/graxcare-icon-512.png
+          file v6/assets/graxcare-icon-1024.png
       - name: Commit binary icons
         run: |
           git config user.name "GraxCare Build"
           git config user.email "actions@users.noreply.github.com"
-          git add v6/assets/graxcare-icon-192.png v6/assets/graxcare-icon-512.png
+          git add v6/assets/graxcare-icon-192.png v6/assets/graxcare-icon-512.png v6/assets/graxcare-icon-1024.png
           git diff --cached --quiet && exit 0
-          git commit -m "Add high-resolution commercial PWA icons"
-          git push origin HEAD:agent/graxcare-nav-png-final
+          git commit -m "Add verified premium GraxCare PNG icons"
+          git push origin HEAD:agent/graxcare-install-premium-fix
