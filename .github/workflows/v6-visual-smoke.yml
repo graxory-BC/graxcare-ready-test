@@ -31,7 +31,7 @@ jobs:
           python3 -m http.server 4173 --directory . >/tmp/graxcare-server.log 2>&1 &
           for i in {1..20}; do curl -fsS http://127.0.0.1:4173/v6/ >/dev/null && exit 0; sleep 1; done
           exit 1
-      - name: Test navigation, install presentation and rendered logo
+      - name: Test situation focus, navigation, install presentation and rendered logo
         run: |
           node <<'NODE'
           const { chromium } = require('playwright');
@@ -40,8 +40,32 @@ jobs:
             const browser=await chromium.launch({headless:true});
             const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'allow'});
             const page=await context.newPage();
-            await page.goto('http://127.0.0.1:4173/v6/?ci=visual-sync-20260808c',{waitUntil:'domcontentloaded'});
+            await page.goto('http://127.0.0.1:4173/v6/?ci=visual-sync-20260808d',{waitUntil:'domcontentloaded'});
             await page.waitForSelector('#situationsGrid .situation-card');
+
+            await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
+            await page.click('#situationsGrid .situation-card[data-situation-id="urgent-care"]');
+            await page.waitForTimeout(140);
+            const actionState=await page.evaluate(()=>{
+              const view=document.getElementById('actionView');
+              const hero=document.querySelector('#actionContent .action-hero');
+              const header=document.querySelector('.app-header');
+              return {
+                hidden:view.hidden,
+                heroText:hero?.querySelector('h1')?.textContent?.trim()||'',
+                top:hero?.getBoundingClientRect().top??9999,
+                headerBottom:header?.getBoundingClientRect().bottom||0,
+                visible:[...document.querySelectorAll('.view')].filter(v=>!v.hidden).map(v=>v.dataset.view)
+              };
+            });
+            assert.equal(actionState.hidden,false,'action: hidden after situation selection');
+            assert.equal(actionState.heroText,'We need urgent care','action: wrong situation opened');
+            assert.deepEqual(actionState.visible,['action'],'action: more than one view visible');
+            assert.ok(actionState.top>=actionState.headerBottom-2,'action: hero hidden behind header');
+            assert.ok(actionState.top<=actionState.headerBottom+24,'action: selected situation not brought directly into viewport');
+
+            await page.click('#actionView [data-route="home"]');
+            await page.waitForTimeout(120);
             const routes=[
               ['followup','followupView','Keep the next steps organized.'],
               ['backup','backupView','Backup and restore'],
@@ -118,7 +142,8 @@ jobs:
           assert raw[:4]==b'RIFF' and raw[8:12]==b'WEBP', 'verified source is not a real WebP'
           print('PNG_AND_SOURCE_OK')
           PY
-          grep -q "compact-commercial-20260807r" v6/update-shell.js
+          grep -q "visual-sync-20260808d" v6/update-shell.js
+          grep -q "revealSelectedAction" v6/update-shell.js
           ! grep -q "stopImmediatePropagation" v6/update-shell.js
           grep -q "visual-sync-20260808c" v6/manifest-commercial.webmanifest
           grep -q "graxcare-icon-192.png" v6/manifest-commercial.webmanifest
