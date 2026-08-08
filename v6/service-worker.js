@@ -1,16 +1,18 @@
-const CACHE = 'graxcare-ready-stable-nav-hq-icon-20260807q';
+const CACHE = 'graxcare-ready-stable-nav-hq-icon-20260807s';
 const APP_SHELL = [
   './',
   './index.html',
   './install.html',
-  './manifest-commercial.webmanifest?r=commercial-hq-20260807q',
+  './manifest-commercial.webmanifest?r=commercial-hq-20260807s',
   './visual-v6.css?r=compact-commercial-20260807m',
   './premium-icon-art.css?r=compact-commercial-20260807m',
   './commercial-logo.css?r=original-logo-20260806',
   './commercial-logo.js?r=original-logo-20260806',
-  './update-shell.js?r=compact-commercial-20260807q',
+  './update-shell.js?r=compact-commercial-20260807r',
   './assets/graxcare-logo-master-small.b64.txt',
-  './assets/graxcare-app-icon.svg?brand=commercial-hq-20260807q',
+  './assets/graxcare-icon-192.png?v=20260807s',
+  './assets/graxcare-icon-512.png?v=20260807s',
+  './assets/graxcare-icon-1024.png?v=20260807s',
   '../styles.css?r=compact-commercial-20260807m',
   '../visual-final.css?r=compact-commercial-20260807m',
   '../app.js?r=compact-commercial-20260807m'
