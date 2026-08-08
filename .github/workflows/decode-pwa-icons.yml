@@ -1,0 +1,33 @@
+name: Decode PWA icons
+
+on:
+  push:
+    branches:
+      - agent/graxcare-nav-png-final
+    paths:
+      - 'v6/assets/graxcare-icon-*.png.b64'
+
+permissions:
+  contents: write
+
+jobs:
+  decode-icons:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/graxcare-nav-png-final
+      - name: Decode real PNG icons
+        run: |
+          base64 -d v6/assets/graxcare-icon-192.png.b64 > v6/assets/graxcare-icon-192.png
+          base64 -d v6/assets/graxcare-icon-512.png.b64 > v6/assets/graxcare-icon-512.png
+          file v6/assets/graxcare-icon-192.png
+          file v6/assets/graxcare-icon-512.png
+      - name: Commit binary icons
+        run: |
+          git config user.name "GraxCare Build"
+          git config user.email "actions@users.noreply.github.com"
+          git add v6/assets/graxcare-icon-192.png v6/assets/graxcare-icon-512.png
+          git diff --cached --quiet && exit 0
+          git commit -m "Add high-resolution commercial PWA icons"
+          git push origin HEAD:agent/graxcare-nav-png-final

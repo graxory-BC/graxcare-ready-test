@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  document.documentElement.dataset.visualBuild = 'compact-commercial-20260807q';
+  document.documentElement.dataset.visualBuild = 'compact-commercial-20260807r';
   const style = document.createElement('style');
   style.id = 'gcr-compact-commercial-q';
   style.textContent = `
@@ -89,25 +89,35 @@
   `;
   document.head.appendChild(style);
 
-  /* Let the original V6 router perform all functional navigation. After it runs,
-     only correct the viewport position so the requested section is immediately visible. */
+  /* The original V6 router owns the route state. After its click handler finishes,
+     move the selected section itself into the visible viewport. scrollIntoView
+     also handles Android browsers where the scrolling element is not window. */
+  function revealSelectedRoute(route) {
+    const target = document.querySelector(`.view[data-view="${route}"]`);
+    if (!target || target.hidden || getComputedStyle(target).display === 'none') return;
+
+    target.style.scrollMarginTop = '8px';
+    target.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' });
+
+    /* Repeat once after layout/render settles (not a second navigation). */
+    setTimeout(() => {
+      if (target.hidden || getComputedStyle(target).display === 'none') return;
+      target.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' });
+    }, 80);
+  }
+
   document.addEventListener('click', event => {
     const button = event.target.closest?.('.bottom-nav .nav-button[data-route]');
     if (!button) return;
     const route = button.dataset.route;
     if (!['home','followup','backup','help'].includes(route)) return;
 
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const target = document.querySelector(`.view[data-view="${route}"]`);
-      if (!target || target.hidden) return;
-      const header = document.querySelector('.app-header');
-      const headerHeight = header ? header.getBoundingClientRect().height : 0;
-      const top = target.getBoundingClientRect().top + window.scrollY - headerHeight - 8;
-      window.scrollTo({ top: Math.max(0, top), left: 0, behavior: 'auto' });
-    }));
+    /* This listener is registered before app.js; defer until the native V6
+       click handler has switched/rendered the route. */
+    setTimeout(() => revealSelectedRoute(route), 0);
   });
 
-  const refreshKey = 'gcr-compact-commercial-20260807q';
+  const refreshKey = 'gcr-compact-commercial-20260807r';
   if (!('serviceWorker' in navigator)) return;
   let reloading = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
