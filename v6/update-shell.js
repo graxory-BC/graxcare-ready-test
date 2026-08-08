@@ -1,10 +1,14 @@
 (() => {
   'use strict';
 
-  document.documentElement.dataset.visualBuild = 'compact-commercial-20260807o';
+  document.documentElement.dataset.visualBuild = 'compact-commercial-20260807p';
   const style = document.createElement('style');
-  style.id = 'gcr-compact-commercial-o';
+  style.id = 'gcr-compact-commercial-p';
   style.textContent = `
+    /* Primary views are mutually exclusive. This prevents a selected section from
+       remaining below another section on mobile browsers. */
+    html body .view[hidden]{display:none!important}
+
     @media(max-width:719px){
       html body #situationsGrid.situations-grid{
         grid-template-columns:repeat(2,minmax(0,1fr))!important;
@@ -87,14 +91,41 @@
   `;
   document.head.appendChild(style);
 
+  const primaryRoutes = new Set(['home','followup','backup','help']);
+
+  function scrollRouteIntoPosition(target) {
+    if (!target) return;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const header = document.querySelector('.app-header');
+      const headerHeight = header ? header.getBoundingClientRect().height : 0;
+      const absoluteTop = target.getBoundingClientRect().top + window.scrollY;
+      const desiredTop = Math.max(0, absoluteTop - headerHeight - 6);
+      window.scrollTo({ top: desiredTop, left: 0, behavior: 'auto' });
+    }));
+  }
+
   function openPrimaryRoute(route) {
+    if (!primaryRoutes.has(route)) return;
+
+    const target = document.querySelector(`.view[data-view="${route}"]`);
+    if (!target) return;
+
     document.querySelectorAll('.view').forEach(view => {
-      view.hidden = view.dataset.view !== route;
+      const active = view === target;
+      view.hidden = !active;
+      view.setAttribute('aria-hidden', active ? 'false' : 'true');
+      if (active) {
+        view.style.setProperty('display', 'block', 'important');
+      } else {
+        view.style.setProperty('display', 'none', 'important');
+      }
     });
+
     document.querySelectorAll('.bottom-nav .nav-button').forEach(button => {
       const active = button.dataset.route === route;
       button.classList.toggle('active', active);
-      button.setAttribute('aria-current', active ? 'page' : 'false');
+      if (active) button.setAttribute('aria-current', 'page');
+      else button.removeAttribute('aria-current');
     });
 
     try {
@@ -104,23 +135,29 @@
       console.error('GraxCare route render failed', error);
     }
 
-    const target = document.querySelector(`.view[data-view="${route}"]`);
-    if (target) target.hidden = false;
-    window.scrollTo({ top: 0, behavior: 'auto' });
-    document.querySelector('#main')?.focus({ preventScroll: true });
+    target.hidden = false;
+    target.setAttribute('aria-hidden', 'false');
+    target.style.setProperty('display', 'block', 'important');
+    scrollRouteIntoPosition(target);
   }
 
   document.addEventListener('click', event => {
     const button = event.target.closest?.('.bottom-nav .nav-button[data-route]');
     if (!button) return;
     const route = button.dataset.route;
-    if (!['home','followup','backup','help'].includes(route)) return;
+    if (!primaryRoutes.has(route)) return;
     event.preventDefault();
     event.stopImmediatePropagation();
     openPrimaryRoute(route);
   }, true);
 
-  const refreshKey = 'gcr-compact-commercial-20260807o';
+  /* Keep the first paint normalized even after restoration from Android/Chrome. */
+  window.addEventListener('pageshow', () => {
+    const active = document.querySelector('.bottom-nav .nav-button.active[data-route]');
+    if (active && primaryRoutes.has(active.dataset.route)) openPrimaryRoute(active.dataset.route);
+  }, { once: true });
+
+  const refreshKey = 'gcr-compact-commercial-20260807p';
   if (!('serviceWorker' in navigator)) return;
   let reloading = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
