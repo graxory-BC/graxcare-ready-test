@@ -65,6 +65,32 @@
     font-size:12px!important;
     line-height:1.18!important;
   }
+
+  /* Desktop balance: keep the same hierarchy as the approved mobile V6. */
+  html body #homeView{
+    grid-template-columns:minmax(360px,390px) minmax(0,1fr)!important;
+    gap:18px!important;
+  }
+  html body #homeView > .panel[aria-labelledby="whoTitle"] .section-heading{
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:12px!important;
+  }
+  html body #homeView > .panel[aria-labelledby="whoTitle"] .section-heading .button{
+    width:100%!important;
+  }
+
+  /* Keep the approved master logo present without letting it dominate desktop. */
+  html.gcr-logo-ready body .bottom-nav{
+    padding-top:108px!important;
+  }
+  html.gcr-logo-ready body .bottom-nav::before{
+    top:12px!important;
+    left:22px!important;
+    right:22px!important;
+    height:84px!important;
+    background-size:contain!important;
+  }
 }
 
 /* Make desktop panels feel like the same product rather than a separate layout. */
