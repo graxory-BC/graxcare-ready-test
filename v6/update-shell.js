@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  document.documentElement.dataset.visualBuild = 'compact-commercial-20260807r';
+  document.documentElement.dataset.visualBuild = 'visual-sync-20260808d';
   const style = document.createElement('style');
   style.id = 'gcr-compact-commercial-q';
   style.textContent = `
@@ -89,35 +89,59 @@
   `;
   document.head.appendChild(style);
 
-  /* The original V6 router owns the route state. After its click handler finishes,
-     move the selected section itself into the visible viewport. scrollIntoView
-     also handles Android browsers where the scrolling element is not window. */
+  function headerOffset() {
+    const header = document.querySelector('.app-header');
+    return Math.max(8, Math.ceil(header?.getBoundingClientRect().height || 0) + 8);
+  }
+
+  /* The original V6 router owns route state. This helper only places the
+     route that V6 already opened into the visible viewport. */
   function revealSelectedRoute(route) {
     const target = document.querySelector(`.view[data-view="${route}"]`);
     if (!target || target.hidden || getComputedStyle(target).display === 'none') return;
 
-    target.style.scrollMarginTop = '8px';
+    target.style.scrollMarginTop = `${headerOffset()}px`;
     target.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' });
 
-    /* Repeat once after layout/render settles (not a second navigation). */
     setTimeout(() => {
       if (target.hidden || getComputedStyle(target).display === 'none') return;
       target.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' });
     }, 80);
   }
 
+  /* Situation cards are rendered by app.js. After app.js switches to the
+     action route, focus the selected situation itself instead of leaving the
+     user at the top of the document. */
+  function revealSelectedAction() {
+    const actionView = document.querySelector('.view[data-view="action"]');
+    const target = document.querySelector('#actionContent .action-hero');
+    if (!actionView || actionView.hidden || !target || getComputedStyle(actionView).display === 'none') return;
+
+    target.style.scrollMarginTop = `${headerOffset()}px`;
+    target.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' });
+
+    setTimeout(() => {
+      if (actionView.hidden || getComputedStyle(actionView).display === 'none') return;
+      target.scrollIntoView({ behavior: 'auto', block: 'start', inline: 'nearest' });
+    }, 80);
+  }
+
   document.addEventListener('click', event => {
+    const situationButton = event.target.closest?.('#situationsGrid .situation-card[data-situation-id]');
+    if (situationButton && !situationButton.disabled) {
+      setTimeout(revealSelectedAction, 0);
+      return;
+    }
+
     const button = event.target.closest?.('.bottom-nav .nav-button[data-route]');
     if (!button) return;
     const route = button.dataset.route;
     if (!['home','followup','backup','help'].includes(route)) return;
 
-    /* This listener is registered before app.js; defer until the native V6
-       click handler has switched/rendered the route. */
     setTimeout(() => revealSelectedRoute(route), 0);
   });
 
-  const refreshKey = 'gcr-compact-commercial-20260807r';
+  const refreshKey = 'gcr-visual-sync-20260808d';
   if (!('serviceWorker' in navigator)) return;
   let reloading = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
