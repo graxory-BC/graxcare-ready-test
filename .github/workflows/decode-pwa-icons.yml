@@ -1,33 +1,41 @@
-name: Decode PWA icons
+name: Build verified PWA icons
 
 on:
   push:
     branches:
-      - agent/graxcare-nav-png-final
-    paths:
-      - 'v6/assets/graxcare-icon-*.png.b64'
+      - main
+      - agent/graxcare-install-premium-fix
 
 permissions:
   contents: write
 
 jobs:
-  decode-icons:
+  build-icons:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: agent/graxcare-nav-png-final
-      - name: Decode real PNG icons
+          ref: ${{ github.ref_name }}
+      - name: Restore verified commercial icon from repository history
         run: |
-          base64 -d v6/assets/graxcare-icon-192.png.b64 > v6/assets/graxcare-icon-192.png
-          base64 -d v6/assets/graxcare-icon-512.png.b64 > v6/assets/graxcare-icon-512.png
-          file v6/assets/graxcare-icon-192.png
-          file v6/assets/graxcare-icon-512.png
-      - name: Commit binary icons
+          curl --fail --location --silent --show-error \
+            'https://raw.githubusercontent.com/graxory-BC/graxcare-ready-test/635801ea8e48c2f12adda63c206d31c61a05c048/v6/assets/graxcare-app-icon.svg' \
+            --output v6/assets/graxcare-app-icon.svg
+          test -s v6/assets/graxcare-app-icon.svg
+      - name: Render premium Android PNG sizes
+        run: |
+          convert -background white -density 600 v6/assets/graxcare-app-icon.svg -resize 192x192 v6/assets/graxcare-icon-192.png
+          convert -background white -density 600 v6/assets/graxcare-app-icon.svg -resize 512x512 v6/assets/graxcare-icon-512.png
+          convert -background white -density 600 v6/assets/graxcare-app-icon.svg -resize 1024x1024 v6/assets/graxcare-icon-1024.png
+          identify v6/assets/graxcare-icon-192.png
+          identify v6/assets/graxcare-icon-512.png
+          identify v6/assets/graxcare-icon-1024.png
+      - name: Commit verified icon assets
         run: |
           git config user.name "GraxCare Build"
           git config user.email "actions@users.noreply.github.com"
-          git add v6/assets/graxcare-icon-192.png v6/assets/graxcare-icon-512.png
+          git add v6/assets/graxcare-app-icon.svg v6/assets/graxcare-icon-192.png v6/assets/graxcare-icon-512.png v6/assets/graxcare-icon-1024.png
           git diff --cached --quiet && exit 0
-          git commit -m "Add high-resolution commercial PWA icons"
-          git push origin HEAD:agent/graxcare-nav-png-final
+          git commit -m "Restore verified premium GraxCare install icons"
+          git push origin HEAD:${{ github.ref_name }}
