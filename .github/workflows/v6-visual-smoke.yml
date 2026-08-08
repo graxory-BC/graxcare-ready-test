@@ -80,7 +80,7 @@ jobs:
             assert.ok(headerLogoState.src.includes('graxcare-logo-source.webp'),'Header logo is not using verified local source');
 
             await page.goto('http://127.0.0.1:4173/v6/install.html?ci=visual-sync-20260808c',{waitUntil:'domcontentloaded'});
-            await page.getByRole('heading',{name:'GraxCare Ready',exact:true}).waitFor({state:'visible'});
+            assert.equal(await page.locator('h1').count(),0,'Duplicated GraxCare Ready heading still present');
             await page.getByText('The 60-Second Family Care Action System',{exact:true}).waitFor({state:'visible'});
             const logo=page.locator('#installLogo');
             await logo.waitFor({state:'visible'});
@@ -89,6 +89,12 @@ jobs:
             assert.ok(logoState.naturalWidth>0 && logoState.naturalHeight>0,'Install logo did not render');
             assert.ok(logoState.src.includes('graxcare-logo-source.webp') || logoState.src.includes('graxcare-icon-512.png'),'Install logo is not using a verified local asset');
             await page.getByRole('button',{name:/GraxCare Ready/}).waitFor({state:'visible'});
+            const cardState=await page.locator('.card').evaluate(el=>{
+              const r=el.getBoundingClientRect();
+              return {centerX:r.left+r.width/2,centerY:r.top+r.height/2,vw:innerWidth,vh:innerHeight};
+            });
+            assert.ok(Math.abs(cardState.centerX-cardState.vw/2)<=2,'Install card is not horizontally centered');
+            assert.ok(Math.abs(cardState.centerY-cardState.vh/2)<=2,'Install card is not vertically centered');
 
             const manifest=await page.evaluate(async()=>await (await fetch('./manifest-commercial.webmanifest?r=visual-sync-20260808c')).json());
             assert.equal(manifest.name,'GraxCare Ready');
@@ -120,7 +126,7 @@ jobs:
           ! grep -q "graxcare-icon-source-20260807.svg" v6/install.html
           ! grep -q "graxcare-icon-source-20260807.svg" v6/manifest-commercial.webmanifest
           ! grep -q "graxcare-icon-source-20260807.svg" v6/service-worker.js
-          grep -q "<h1>GraxCare Ready</h1>" v6/install.html
+          ! grep -q "<h1>GraxCare Ready</h1>" v6/install.html
           test -s v6/visual-sync.css
           grep -q "const STORAGE_KEY = 'graxcare_ready_state_v1';" app.js
           test "$(git hash-object app.js)" = "216ad539cb5daca5c312b522dae79c3f83dae502"
