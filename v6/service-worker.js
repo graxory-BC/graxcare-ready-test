@@ -1,4 +1,4 @@
-const CACHE = 'graxcare-ready-nav-install-20260807o';
+const CACHE = 'graxcare-ready-nav-focus-20260807p';
 const APP_SHELL = [
   './',
   './index.html',
@@ -8,7 +8,7 @@ const APP_SHELL = [
   './premium-icon-art.css?r=compact-commercial-20260807m',
   './commercial-logo.css?r=original-logo-20260806',
   './commercial-logo.js?r=original-logo-20260806',
-  './update-shell.js?r=compact-commercial-20260807o',
+  './update-shell.js?r=compact-commercial-20260807p',
   './assets/graxcare-logo-master-small.b64.txt',
   './assets/graxcare-app-icon.svg?brand=locked-master-20260807n',
   '../styles.css?r=compact-commercial-20260807m',
