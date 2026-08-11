@@ -54,10 +54,13 @@ jobs:
             await page.reload({waitUntil:'domcontentloaded'});
             await page.waitForSelector('#situationsGrid .situation-card[data-situation-id="urgent-care"]:not([disabled])');
 
+            await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
             await page.click('#situationsGrid .situation-card[data-situation-id="urgent-care"]');
-            await page.waitForTimeout(120);
+            await page.waitForTimeout(140);
             assert.equal(await page.locator('#actionView').evaluate(v=>v.hidden),false);
-            await page.getByText('We need urgent care',{exact:false}).first().waitFor({state:'visible'});
+            const actionTitle=page.locator('#actionContent .action-hero h1');
+            await actionTitle.waitFor({state:'visible'});
+            assert.equal((await actionTitle.textContent()).trim(),'We need urgent care');
 
             await page.click('#actionView [data-route="home"]');
             for(const [route,id,text] of [
@@ -66,10 +69,11 @@ jobs:
               ['help','helpView','How GraxCare Ready works'],
               ['home','homeView','When something changes, everyone knows what to do next.']
             ]){
+              await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
               await page.click(`.bottom-nav .nav-button[data-route="${route}"]`);
               await page.waitForTimeout(100);
               assert.equal(await page.locator(`#${id}`).evaluate(v=>v.hidden),false,`${route}: hidden`);
-              await page.getByText(text,{exact:false}).first().waitFor({state:'visible'});
+              await page.locator(`#${id}`).getByText(text,{exact:false}).first().waitFor({state:'visible'});
             }
 
             const headerLogo=page.locator('.brand-logo-master');
