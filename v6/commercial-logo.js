@@ -4,18 +4,19 @@
   const brand = document.querySelector('.brand');
   if (!brand) return;
 
-  const primary = './assets/graxcare-app-icon.svg?v=visual-sync-20260811a';
-  const fallback = './assets/graxcare-icon-512.png?v=visual-sync-20260811a';
+  const primary = './assets/graxcare-icon-512.png?v=visual-sync-20260811b';
+  const fallback = './assets/graxcare-icon-192.png?v=visual-sync-20260811b';
   const image = new Image();
   image.className = 'brand-logo-master';
-  image.alt = 'GraxCare Ready emblem';
-  image.width = 320;
-  image.height = 320;
+  image.alt = 'GraxCare Ready';
+  image.width = 512;
+  image.height = 512;
   image.decoding = 'async';
   let usingFallback = false;
 
   image.addEventListener('load', () => {
     brand.querySelector('.brand-placeholder')?.replaceWith(image);
+    brand.querySelector('.brand-copy')?.remove();
     document.documentElement.style.setProperty('--gcr-logo-image', `url("${image.src}")`);
     document.documentElement.classList.add('gcr-logo-ready');
   });

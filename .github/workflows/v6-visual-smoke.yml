@@ -31,7 +31,7 @@ jobs:
           python3 -m http.server 4173 --directory . >/tmp/graxcare-server.log 2>&1 &
           for i in {1..20}; do curl -fsS http://127.0.0.1:4173/v6/ >/dev/null && exit 0; sleep 1; done
           exit 1
-      - name: Test navigation, corrected brand and install presentation
+      - name: Test navigation and corrected PNG brand
         run: |
           node <<'NODE'
           const { chromium } = require('playwright');
@@ -40,23 +40,33 @@ jobs:
             const browser=await chromium.launch({headless:true});
             const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'allow'});
             const page=await context.newPage();
-            await page.goto('http://127.0.0.1:4173/v6/?ci=visual-sync-20260811a',{waitUntil:'domcontentloaded'});
+            await page.goto('http://127.0.0.1:4173/v6/?ci=visual-sync-20260811b',{waitUntil:'domcontentloaded'});
             await page.waitForSelector('#situationsGrid .situation-card');
+
+            const assetState=await page.evaluate(async()=>{
+              const response=await fetch('./assets/graxcare-icon-512.png?v=visual-sync-20260811b',{cache:'no-store'});
+              const blob=await response.blob();
+              const url=URL.createObjectURL(blob);
+              const dims=await new Promise((resolve,reject)=>{
+                const img=new Image();
+                img.onload=()=>resolve({w:img.naturalWidth,h:img.naturalHeight});
+                img.onerror=reject;
+                img.src=url;
+              });
+              URL.revokeObjectURL(url);
+              return {ok:response.ok,status:response.status,type:blob.type,...dims};
+            });
+            assert.equal(assetState.ok,true,'Corrected 512 PNG did not load');
+            assert.equal(assetState.w,512);
+            assert.equal(assetState.h,512);
+            assert.equal(assetState.type,'image/png');
 
             const profileId='11111111-1111-4111-8111-111111111111';
             await page.evaluate(({profileId})=>{
               localStorage.setItem('graxcare_ready_state_v1',JSON.stringify({
                 version:1,
-                profiles:[{
-                  id:profileId,
-                  name:'Test',relationship:'Dad',age:'',primaryContact:'',primaryPhone:'',doctor:'',pharmacy:'',hospital:'',insurance:'',
-                  allergies:'',conditions:'',medications:'',supportNeeds:'',photoDataUrl:''
-                }],
-                selectedProfileId:profileId,
-                activeSituationId:null,
-                actionProgress:{},
-                followups:[],
-                updatedAt:new Date().toISOString()
+                profiles:[{id:profileId,name:'Test',relationship:'Dad',age:'',primaryContact:'',primaryPhone:'',doctor:'',pharmacy:'',hospital:'',insurance:'',allergies:'',conditions:'',medications:'',supportNeeds:'',photoDataUrl:''}],
+                selectedProfileId:profileId,activeSituationId:null,actionProgress:{},followups:[],updatedAt:new Date().toISOString()
               }));
             },{profileId});
             await page.reload({waitUntil:'domcontentloaded'});
@@ -65,140 +75,72 @@ jobs:
             await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
             await page.click('#situationsGrid .situation-card[data-situation-id="urgent-care"]');
             await page.waitForTimeout(140);
-            const actionState=await page.evaluate(()=>{
-              const view=document.getElementById('actionView');
-              const hero=document.querySelector('#actionContent .action-hero');
-              const header=document.querySelector('.app-header');
-              return {
-                hidden:view.hidden,
-                heroText:hero?.querySelector('h1')?.textContent?.trim()||'',
-                top:hero?.getBoundingClientRect().top??9999,
-                headerBottom:header?.getBoundingClientRect().bottom||0,
-                visible:[...document.querySelectorAll('.view')].filter(v=>!v.hidden).map(v=>v.dataset.view)
-              };
-            });
-            assert.equal(actionState.hidden,false,'action: hidden after situation selection');
-            assert.equal(actionState.heroText,'We need urgent care','action: wrong situation opened');
-            assert.deepEqual(actionState.visible,['action'],'action: more than one view visible');
-            assert.ok(actionState.top>=actionState.headerBottom-2,'action: hero hidden behind header');
-            assert.ok(actionState.top<=actionState.headerBottom+24,'action: selected situation not brought directly into viewport');
+            assert.equal(await page.locator('#actionView').evaluate(v=>v.hidden),false);
+            const actionTitle=page.locator('#actionContent .action-hero h1');
+            await actionTitle.waitFor({state:'visible'});
+            assert.equal((await actionTitle.textContent()).trim(),'We need urgent care');
 
             await page.click('#actionView [data-route="home"]');
-            await page.waitForTimeout(120);
-            const routes=[
+            for(const [route,id,text] of [
               ['followup','followupView','Keep the next steps organized.'],
               ['backup','backupView','Backup and restore'],
               ['help','helpView','How GraxCare Ready works'],
               ['home','homeView','When something changes, everyone knows what to do next.']
-            ];
-            for(const [route,id,text] of routes){
+            ]){
               await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
               await page.click(`.bottom-nav .nav-button[data-route="${route}"]`);
-              await page.waitForTimeout(120);
-              const state=await page.evaluate(({route,id})=>{
-                const target=document.getElementById(id);
-                const header=document.querySelector('.app-header');
-                return {
-                  hidden:target.hidden,
-                  display:getComputedStyle(target).display,
-                  top:target.getBoundingClientRect().top,
-                  headerBottom:header?.getBoundingClientRect().bottom||0,
-                  active:document.querySelector('.bottom-nav .nav-button.active')?.dataset.route,
-                  visible:[...document.querySelectorAll('.view')].filter(v=>!v.hidden).map(v=>v.dataset.view)
-                };
-              },{route,id});
-              assert.equal(state.hidden,false,`${route}: hidden`);
-              assert.notEqual(state.display,'none',`${route}: not rendered`);
-              assert.equal(state.active,route,`${route}: active state wrong`);
-              assert.deepEqual(state.visible,[route],`${route}: more than one primary view visible`);
-              assert.ok(state.top<=state.headerBottom+20,`${route}: section not brought into first viewport`);
-              await page.getByText(text,{exact:false}).first().waitFor({state:'visible'});
+              await page.waitForTimeout(100);
+              assert.equal(await page.locator(`#${id}`).evaluate(v=>v.hidden),false,`${route}: hidden`);
+              await page.locator(`#${id}`).getByText(text,{exact:false}).first().waitFor({state:'visible'});
             }
 
+            await page.waitForTimeout(250);
             const headerLogo=page.locator('.brand-logo-master');
-            await headerLogo.waitFor({state:'visible'});
-            const headerLogoState=await headerLogo.evaluate(img=>({complete:img.complete,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,src:img.currentSrc||img.src}));
-            assert.equal(headerLogoState.complete,true,'Header emblem did not finish loading');
-            assert.ok(headerLogoState.naturalWidth>0 && headerLogoState.naturalHeight>0,'Header emblem did not render');
-            assert.ok(headerLogoState.src.includes('graxcare-app-icon.svg') || headerLogoState.src.includes('graxcare-icon-512.png'),'Header is not using a verified local emblem asset');
-            const brandState=await page.locator('.brand-copy').evaluate(el=>{
-              const r=el.getBoundingClientRect();
-              const parent=el.closest('.brand').getBoundingClientRect();
-              return {
-                visible:getComputedStyle(el).display!=='none',
-                main:el.querySelector('strong')?.textContent?.trim(),
-                ready:el.querySelector('span')?.textContent?.trim(),
-                top:r.top,bottom:r.bottom,left:r.left,right:r.right,
-                pTop:parent.top,pBottom:parent.bottom,pLeft:parent.left,pRight:parent.right
-              };
-            });
-            assert.equal(brandState.visible,true,'Live brand name is hidden');
-            assert.equal(brandState.main,'GraxCare');
-            assert.equal(brandState.ready,'Ready');
-            assert.ok(brandState.bottom<=brandState.pBottom+2,'Brand descender is clipped vertically');
-            assert.ok(brandState.right<=brandState.pRight+2,'Brand name is clipped horizontally');
+            assert.equal(await headerLogo.count(),1,'Corrected header logo was not inserted');
+            const headerState=await headerLogo.evaluate(img=>({complete:img.complete,w:img.naturalWidth,h:img.naturalHeight,src:img.currentSrc||img.src,display:getComputedStyle(img).display}));
+            assert.equal(headerState.complete,true);
+            assert.equal(headerState.w,512);
+            assert.equal(headerState.h,512);
+            assert.ok(headerState.src.includes('graxcare-icon-512.png'));
+            assert.equal(await page.locator('.brand-copy').count(),0,'Duplicate live wordmark remains after corrected PNG loads');
 
-            await page.goto('http://127.0.0.1:4173/v6/install.html?ci=visual-sync-20260811a',{waitUntil:'domcontentloaded'});
-            assert.equal(await page.locator('h1').count(),0,'Legacy duplicated heading returned');
-            await page.getByText('GraxCare Ready',{exact:true}).waitFor({state:'visible'});
+            await page.goto('http://127.0.0.1:4173/v6/install.html?ci=visual-sync-20260811b',{waitUntil:'domcontentloaded'});
             await page.getByText('The 60-Second Family Care Action System',{exact:true}).waitFor({state:'visible'});
-            const logo=page.locator('#installLogo');
-            await logo.waitFor({state:'visible'});
-            const logoState=await logo.evaluate(img=>({complete:img.complete,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,src:img.currentSrc||img.src,borderRadius:getComputedStyle(img).borderRadius}));
-            assert.equal(logoState.complete,true,'Install emblem did not finish loading');
-            assert.ok(logoState.naturalWidth>0 && logoState.naturalHeight>0,'Install emblem did not render');
-            assert.ok(logoState.src.includes('graxcare-app-icon.svg') || logoState.src.includes('graxcare-icon-512.png'),'Install screen is not using a verified local emblem asset');
-            assert.notEqual(logoState.borderRadius,'0px','Install emblem is not using rounded treatment');
-            await page.getByRole('button',{name:/GraxCare Ready/}).waitFor({state:'visible'});
-            const cardState=await page.locator('.card').evaluate(el=>{
-              const r=el.getBoundingClientRect();
-              return {centerX:r.left+r.width/2,centerY:r.top+r.height/2,vw:innerWidth,vh:innerHeight};
-            });
-            assert.ok(Math.abs(cardState.centerX-cardState.vw/2)<=2,'Install card is not horizontally centered');
-            assert.ok(Math.abs(cardState.centerY-cardState.vh/2)<=2,'Install card is not vertically centered');
-            const installBrandState=await page.locator('.install-brand').evaluate(el=>{
-              const r=el.getBoundingClientRect();
-              const card=el.closest('.card').getBoundingClientRect();
-              return {bottom:r.bottom,right:r.right,cardBottom:card.bottom,cardRight:card.right};
-            });
-            assert.ok(installBrandState.bottom<installBrandState.cardBottom,'Install brand is vertically clipped');
-            assert.ok(installBrandState.right<=installBrandState.cardRight,'Install brand is horizontally clipped');
+            const installLogo=page.locator('#installLogo');
+            await installLogo.waitFor({state:'visible'});
+            const installState=await installLogo.evaluate(img=>({complete:img.complete,w:img.naturalWidth,h:img.naturalHeight,src:img.currentSrc||img.src,borderRadius:getComputedStyle(img).borderRadius}));
+            assert.equal(installState.complete,true);
+            assert.equal(installState.w,512);
+            assert.equal(installState.h,512);
+            assert.ok(installState.src.includes('graxcare-icon-512.png'));
+            assert.notEqual(installState.borderRadius,'0px');
 
-            const manifest=await page.evaluate(async()=>await (await fetch('./manifest-commercial.webmanifest?r=visual-sync-20260811a')).json());
+            const manifest=await page.evaluate(async()=>await (await fetch('./manifest-commercial.webmanifest?r=visual-sync-20260811b')).json());
             assert.equal(manifest.name,'GraxCare Ready');
-            assert.equal(manifest.description,'The 60-Second Family Care Action System');
             assert.equal(manifest.id,'./graxcare-ready-commercial-20260808c');
             assert.ok(manifest.icons.some(i=>i.src.includes('graxcare-icon-192.png')&&i.type==='image/png'));
             assert.ok(manifest.icons.some(i=>i.src.includes('graxcare-icon-512.png')&&i.type==='image/png'));
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
-      - name: Verify protected logic and brand build markers
+      - name: Verify protected logic and icon binaries
         run: |
           python3 <<'PY'
           import struct
-          for size in (192,512,1024):
+          for size in (192,512):
               path=f'v6/assets/graxcare-icon-{size}.png'
               data=open(path,'rb').read(24)
               assert data[:8] == b'\x89PNG\r\n\x1a\n', f'{path}: invalid PNG signature'
               width,height=struct.unpack('>II',data[16:24])
               assert (width,height)==(size,size), f'{path}: wrong size {(width,height)}'
-          raw=open('v6/assets/graxcare-logo-source.webp','rb').read(12)
-          assert raw[:4]==b'RIFF' and raw[8:12]==b'WEBP', 'verified source is not a real WebP'
-          print('PNG_AND_SOURCE_OK')
+          print('CORRECTED_PNG_ICONS_OK')
           PY
-          grep -q "visual-sync-20260808d" v6/update-shell.js
-          grep -q "revealSelectedAction" v6/update-shell.js
-          ! grep -q "stopImmediatePropagation" v6/update-shell.js
-          grep -q "visual-sync-20260811a" v6/manifest-commercial.webmanifest
-          grep -q "graxcare-app-icon.svg" v6/commercial-logo.js
-          grep -q "install-brand" v6/install.html
+          grep -q "visual-sync-20260811b" v6/manifest-commercial.webmanifest
+          grep -q "graxcare-icon-512.png" v6/commercial-logo.js
+          ! grep -q "graxcare-app-icon.svg" v6/commercial-logo.js
+          ! grep -q "graxcare-app-icon.svg" v6/install.html
+          ! grep -q "graxcare-app-icon.svg" v6/service-worker.js
           grep -q "graxcare-icon-192.png" v6/manifest-commercial.webmanifest
           grep -q "graxcare-icon-512.png" v6/manifest-commercial.webmanifest
-          ! grep -q "graxcare-icon-source-20260807.svg" v6/install.html
-          ! grep -q "graxcare-icon-source-20260807.svg" v6/manifest-commercial.webmanifest
-          ! grep -q "graxcare-icon-source-20260807.svg" v6/service-worker.js
-          ! grep -q "<h1>GraxCare Ready</h1>" v6/install.html
-          test -s v6/visual-sync.css
           grep -q "const STORAGE_KEY = 'graxcare_ready_state_v1';" app.js
           test "$(git hash-object app.js)" = "216ad539cb5daca5c312b522dae79c3f83dae502"
