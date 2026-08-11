@@ -6,24 +6,28 @@
   <meta name="theme-color" content="#061a38">
   <meta name="description" content="Install GraxCare Ready — The 60-Second Family Care Action System.">
   <title>Install GraxCare Ready</title>
-  <link rel="manifest" href="./manifest-commercial.webmanifest?r=visual-sync-20260808c">
-  <link rel="icon" href="./assets/graxcare-icon-192.png?v=visual-sync-20260808c" sizes="192x192" type="image/png">
-  <link rel="apple-touch-icon" href="./assets/graxcare-icon-512.png?v=visual-sync-20260808c">
+  <link rel="manifest" href="./manifest-commercial.webmanifest?r=visual-sync-20260811a">
+  <link rel="icon" href="./assets/graxcare-icon-192.png?v=visual-sync-20260811a" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="./assets/graxcare-icon-512.png?v=visual-sync-20260811a">
   <style>
     *{box-sizing:border-box}
     html,body{margin:0;width:100%;min-height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#f3f6fa;color:#0d1b3d}
     body{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:16px}
-    .card{width:min(420px,calc(100vw - 32px));margin:auto;background:#fff;border:1px solid #dde4ec;border-radius:28px;padding:24px 22px 22px;box-shadow:0 22px 60px rgba(6,26,56,.14);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
-    .logo{width:190px;height:auto;max-height:174px;object-fit:contain;display:block;margin:0 auto 10px;image-rendering:auto}
+    .card{width:min(420px,calc(100vw - 32px));margin:auto;background:#fff;border:1px solid #dde4ec;border-radius:28px;padding:22px 22px 22px;box-shadow:0 22px 60px rgba(6,26,56,.14);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .logo{width:118px;height:118px;object-fit:contain;display:block;margin:0 auto 8px;padding:8px;background:#fff;border:1px solid rgba(6,27,58,.10);border-radius:28px;box-shadow:0 9px 24px rgba(6,27,58,.11);image-rendering:auto}
+    .install-brand{margin:0 auto 5px;padding:0 2px 4px;white-space:nowrap;overflow:visible;font-family:Georgia,"Times New Roman",serif;font-size:30px;line-height:1.22;letter-spacing:-.025em;font-weight:700}
+    .install-brand .brand-main{color:#0b315e}.install-brand .brand-ready{color:#0a8f83}
     .tagline{margin:0 auto 16px;max-width:310px;color:#53647c;line-height:1.38;font-size:15px}
     .button{width:100%;min-height:54px;border:0;border-radius:15px;padding:14px 16px;background:#087c76;color:#fff;font-weight:850;font-size:16px;cursor:pointer;box-shadow:0 7px 18px rgba(8,124,118,.18)}
     .button:disabled{opacity:.68;cursor:wait}
     .status{min-height:18px;margin:10px 0 0;font-size:12.5px;line-height:1.35;color:#6b7789}
+    @media(max-width:360px){.logo{width:108px;height:108px;border-radius:25px}.install-brand{font-size:27px}.card{padding:20px 18px}}
   </style>
 </head>
 <body>
   <main class="card">
-    <img id="installLogo" class="logo" src="./assets/graxcare-logo-source.webp?v=visual-sync-20260808c" width="190" alt="GraxCare Ready logo">
+    <img id="installLogo" class="logo" src="./assets/graxcare-app-icon.svg?v=visual-sync-20260811a" width="118" height="118" alt="GraxCare Ready emblem">
+    <div class="install-brand" aria-label="GraxCare Ready"><span class="brand-main">GraxCare</span> <span class="brand-ready">Ready</span></div>
     <p class="tagline">The 60-Second Family Care Action System</p>
     <button id="primaryButton" class="button" type="button" disabled>Preparing installation…</button>
     <p id="status" class="status">Preparing this device.</p>
@@ -39,7 +43,7 @@
       logo.addEventListener('error',()=>{
         if(logo.dataset.fallback==='1') return;
         logo.dataset.fallback='1';
-        logo.src='./assets/graxcare-icon-512.png?v=visual-sync-20260808c';
+        logo.src='./assets/graxcare-icon-512.png?v=visual-sync-20260811a';
       });
 
       function showOpen(message='Ready to open.'){
@@ -80,7 +84,7 @@
           }
           return;
         }
-        location.href='./?build=visual-sync-20260808c';
+        location.href='./?build=visual-sync-20260811a';
       });
 
       if('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
