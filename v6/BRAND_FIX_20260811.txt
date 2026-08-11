@@ -1,0 +1,4 @@
+GraxCare Ready V6 brand-root fix 2026-08-11
+- Replace fragile full-wordmark rendering on app/install surfaces with the verified local emblem plus live brand text.
+- Keep app.js and stored-data logic unchanged.
+- Refresh PWA/service-worker cache markers only.

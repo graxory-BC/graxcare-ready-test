@@ -31,7 +31,7 @@ jobs:
           python3 -m http.server 4173 --directory . >/tmp/graxcare-server.log 2>&1 &
           for i in {1..20}; do curl -fsS http://127.0.0.1:4173/v6/ >/dev/null && exit 0; sleep 1; done
           exit 1
-      - name: Test situation focus, navigation, install presentation and rendered logo
+      - name: Test navigation, corrected brand and install presentation
         run: |
           node <<'NODE'
           const { chromium } = require('playwright');
@@ -40,7 +40,7 @@ jobs:
             const browser=await chromium.launch({headless:true});
             const context=await browser.newContext({viewport:{width:390,height:844},serviceWorkers:'allow'});
             const page=await context.newPage();
-            await page.goto('http://127.0.0.1:4173/v6/?ci=visual-sync-20260808d',{waitUntil:'domcontentloaded'});
+            await page.goto('http://127.0.0.1:4173/v6/?ci=visual-sync-20260811a',{waitUntil:'domcontentloaded'});
             await page.waitForSelector('#situationsGrid .situation-card');
 
             const profileId='11111111-1111-4111-8111-111111111111';
@@ -118,19 +118,37 @@ jobs:
             const headerLogo=page.locator('.brand-logo-master');
             await headerLogo.waitFor({state:'visible'});
             const headerLogoState=await headerLogo.evaluate(img=>({complete:img.complete,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,src:img.currentSrc||img.src}));
-            assert.equal(headerLogoState.complete,true,'Header logo did not finish loading');
-            assert.ok(headerLogoState.naturalWidth>0 && headerLogoState.naturalHeight>0,'Header logo did not render');
-            assert.ok(headerLogoState.src.includes('graxcare-logo-source.webp'),'Header logo is not using verified local source');
+            assert.equal(headerLogoState.complete,true,'Header emblem did not finish loading');
+            assert.ok(headerLogoState.naturalWidth>0 && headerLogoState.naturalHeight>0,'Header emblem did not render');
+            assert.ok(headerLogoState.src.includes('graxcare-app-icon.svg') || headerLogoState.src.includes('graxcare-icon-512.png'),'Header is not using a verified local emblem asset');
+            const brandState=await page.locator('.brand-copy').evaluate(el=>{
+              const r=el.getBoundingClientRect();
+              const parent=el.closest('.brand').getBoundingClientRect();
+              return {
+                visible:getComputedStyle(el).display!=='none',
+                main:el.querySelector('strong')?.textContent?.trim(),
+                ready:el.querySelector('span')?.textContent?.trim(),
+                top:r.top,bottom:r.bottom,left:r.left,right:r.right,
+                pTop:parent.top,pBottom:parent.bottom,pLeft:parent.left,pRight:parent.right
+              };
+            });
+            assert.equal(brandState.visible,true,'Live brand name is hidden');
+            assert.equal(brandState.main,'GraxCare');
+            assert.equal(brandState.ready,'Ready');
+            assert.ok(brandState.bottom<=brandState.pBottom+2,'Brand descender is clipped vertically');
+            assert.ok(brandState.right<=brandState.pRight+2,'Brand name is clipped horizontally');
 
-            await page.goto('http://127.0.0.1:4173/v6/install.html?ci=visual-sync-20260808c',{waitUntil:'domcontentloaded'});
-            assert.equal(await page.locator('h1').count(),0,'Duplicated GraxCare Ready heading still present');
+            await page.goto('http://127.0.0.1:4173/v6/install.html?ci=visual-sync-20260811a',{waitUntil:'domcontentloaded'});
+            assert.equal(await page.locator('h1').count(),0,'Legacy duplicated heading returned');
+            await page.getByText('GraxCare Ready',{exact:true}).waitFor({state:'visible'});
             await page.getByText('The 60-Second Family Care Action System',{exact:true}).waitFor({state:'visible'});
             const logo=page.locator('#installLogo');
             await logo.waitFor({state:'visible'});
-            const logoState=await logo.evaluate(img=>({complete:img.complete,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,src:img.currentSrc||img.src}));
-            assert.equal(logoState.complete,true,'Install logo did not finish loading');
-            assert.ok(logoState.naturalWidth>0 && logoState.naturalHeight>0,'Install logo did not render');
-            assert.ok(logoState.src.includes('graxcare-logo-source.webp') || logoState.src.includes('graxcare-icon-512.png'),'Install logo is not using a verified local asset');
+            const logoState=await logo.evaluate(img=>({complete:img.complete,naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,src:img.currentSrc||img.src,borderRadius:getComputedStyle(img).borderRadius}));
+            assert.equal(logoState.complete,true,'Install emblem did not finish loading');
+            assert.ok(logoState.naturalWidth>0 && logoState.naturalHeight>0,'Install emblem did not render');
+            assert.ok(logoState.src.includes('graxcare-app-icon.svg') || logoState.src.includes('graxcare-icon-512.png'),'Install screen is not using a verified local emblem asset');
+            assert.notEqual(logoState.borderRadius,'0px','Install emblem is not using rounded treatment');
             await page.getByRole('button',{name:/GraxCare Ready/}).waitFor({state:'visible'});
             const cardState=await page.locator('.card').evaluate(el=>{
               const r=el.getBoundingClientRect();
@@ -138,16 +156,24 @@ jobs:
             });
             assert.ok(Math.abs(cardState.centerX-cardState.vw/2)<=2,'Install card is not horizontally centered');
             assert.ok(Math.abs(cardState.centerY-cardState.vh/2)<=2,'Install card is not vertically centered');
+            const installBrandState=await page.locator('.install-brand').evaluate(el=>{
+              const r=el.getBoundingClientRect();
+              const card=el.closest('.card').getBoundingClientRect();
+              return {bottom:r.bottom,right:r.right,cardBottom:card.bottom,cardRight:card.right};
+            });
+            assert.ok(installBrandState.bottom<installBrandState.cardBottom,'Install brand is vertically clipped');
+            assert.ok(installBrandState.right<=installBrandState.cardRight,'Install brand is horizontally clipped');
 
-            const manifest=await page.evaluate(async()=>await (await fetch('./manifest-commercial.webmanifest?r=visual-sync-20260808c')).json());
+            const manifest=await page.evaluate(async()=>await (await fetch('./manifest-commercial.webmanifest?r=visual-sync-20260811a')).json());
             assert.equal(manifest.name,'GraxCare Ready');
             assert.equal(manifest.description,'The 60-Second Family Care Action System');
+            assert.equal(manifest.id,'./graxcare-ready-commercial-20260808c');
             assert.ok(manifest.icons.some(i=>i.src.includes('graxcare-icon-192.png')&&i.type==='image/png'));
             assert.ok(manifest.icons.some(i=>i.src.includes('graxcare-icon-512.png')&&i.type==='image/png'));
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
-      - name: Verify PNG binaries and protected logic
+      - name: Verify protected logic and brand build markers
         run: |
           python3 <<'PY'
           import struct
@@ -164,7 +190,9 @@ jobs:
           grep -q "visual-sync-20260808d" v6/update-shell.js
           grep -q "revealSelectedAction" v6/update-shell.js
           ! grep -q "stopImmediatePropagation" v6/update-shell.js
-          grep -q "visual-sync-20260808c" v6/manifest-commercial.webmanifest
+          grep -q "visual-sync-20260811a" v6/manifest-commercial.webmanifest
+          grep -q "graxcare-app-icon.svg" v6/commercial-logo.js
+          grep -q "install-brand" v6/install.html
           grep -q "graxcare-icon-192.png" v6/manifest-commercial.webmanifest
           grep -q "graxcare-icon-512.png" v6/manifest-commercial.webmanifest
           ! grep -q "graxcare-icon-source-20260807.svg" v6/install.html
