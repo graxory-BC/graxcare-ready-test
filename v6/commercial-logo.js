@@ -4,8 +4,8 @@
   const brand = document.querySelector('.brand');
   if (!brand) return;
 
-  const primary = './assets/graxcare-icon-512.png?v=visual-sync-20260811c';
-  const fallback = './assets/graxcare-icon-192.png?v=visual-sync-20260811c';
+  const primary = './assets/graxcare-emblem-premium.svg?v=visual-sync-20260811c';
+  const fallback = './assets/graxcare-icon-512.png?v=visual-sync-20260811c';
   const image = new Image();
   image.className = 'brand-logo-master';
   image.alt = 'GraxCare Ready emblem';
