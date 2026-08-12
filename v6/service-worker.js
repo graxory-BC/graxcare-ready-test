@@ -4,6 +4,7 @@ const APP_SHELL = [
   './index.html',
   './install.html',
   './manifest-commercial.webmanifest?r=visual-sync-20260811c',
+  './assets/graxcare-emblem-premium.svg?v=visual-sync-20260811c',
   './assets/graxcare-icon-192.png?v=visual-sync-20260811c',
   './assets/graxcare-icon-512.png?v=visual-sync-20260811c',
   './visual-v6.css?r=compact-commercial-20260807m',
