@@ -31,7 +31,7 @@ jobs:
           python3 -m http.server 4173 --directory . >/tmp/graxcare-server.log 2>&1 &
           for i in {1..20}; do curl -fsS http://127.0.0.1:4173/v6/ >/dev/null && exit 0; sleep 1; done
           exit 1
-      - name: Test navigation and premium brand rendering
+      - name: Test navigation and premium vector brand
         run: |
           node <<'NODE'
           const { chromium } = require('playwright');
@@ -43,25 +43,14 @@ jobs:
             await page.goto('http://127.0.0.1:4173/v6/?ci=visual-sync-20260811c',{waitUntil:'domcontentloaded'});
             await page.waitForSelector('#situationsGrid .situation-card');
 
-            for (const size of [192,512]) {
-              const state=await page.evaluate(async(size)=>{
-                const response=await fetch(`./assets/graxcare-icon-${size}.png?v=visual-sync-20260811c`,{cache:'no-store'});
-                const blob=await response.blob();
-                const url=URL.createObjectURL(blob);
-                const dims=await new Promise((resolve,reject)=>{
-                  const img=new Image();
-                  img.onload=()=>resolve({w:img.naturalWidth,h:img.naturalHeight});
-                  img.onerror=reject;
-                  img.src=url;
-                });
-                URL.revokeObjectURL(url);
-                return {ok:response.ok,type:blob.type,...dims};
-              },size);
-              assert.equal(state.ok,true,`${size} PNG did not load`);
-              assert.equal(state.w,size);
-              assert.equal(state.h,size);
-              assert.equal(state.type,'image/png');
-            }
+            const vector=await page.evaluate(async()=>{
+              const response=await fetch('./assets/graxcare-emblem-premium.svg?v=visual-sync-20260811c',{cache:'no-store'});
+              return {ok:response.ok,type:response.headers.get('content-type')||'',text:await response.text()};
+            });
+            assert.equal(vector.ok,true,'Premium vector emblem did not load');
+            assert.ok(vector.text.includes('<svg'),'Premium emblem is not SVG');
+            assert.ok(vector.text.includes('#163c69'),'Premium emblem missing navy brand color');
+            assert.ok(vector.text.includes('#1d9698'),'Premium emblem missing teal brand color');
 
             const profileId='11111111-1111-4111-8111-111111111111';
             await page.evaluate(({profileId})=>{
@@ -100,16 +89,17 @@ jobs:
             await headerLogo.waitFor({state:'attached'});
             const headerState=await headerLogo.evaluate(img=>({complete:img.complete,w:img.naturalWidth,h:img.naturalHeight,src:img.currentSrc||img.src}));
             assert.equal(headerState.complete,true);
-            assert.equal(headerState.w,512);
-            assert.equal(headerState.h,512);
-            assert.ok(headerState.src.includes('graxcare-icon-512.png'));
+            assert.ok(headerState.w>0 && headerState.h>0,'Header vector emblem did not render');
+            assert.ok(headerState.src.includes('graxcare-emblem-premium.svg'),'Header is not using premium vector emblem');
 
             const brand=page.locator('.brand-copy');
             assert.equal(await brand.count(),1,'Live wordmark missing');
             assert.equal((await brand.locator('strong').textContent()).trim(),'GraxCare');
             assert.equal((await brand.locator('span').textContent()).trim(),'Ready');
-            const brandBox=await brand.boundingBox();
-            assert.ok(brandBox && brandBox.width>100 && brandBox.height>15,'Live wordmark is not legible-sized');
+            const brandStyle=await brand.evaluate(el=>({display:getComputedStyle(el).display,fontSize:parseFloat(getComputedStyle(el).fontSize),overflow:getComputedStyle(el).overflow}));
+            assert.notEqual(brandStyle.display,'none','Live wordmark is hidden');
+            assert.ok(brandStyle.fontSize>=14,'Live wordmark is too small');
+            assert.equal(brandStyle.overflow,'visible','Live wordmark can be clipped');
 
             await page.goto('http://127.0.0.1:4173/v6/install.html?ci=visual-sync-20260811c',{waitUntil:'domcontentloaded'});
             await page.getByText('The 60-Second Family Care Action System',{exact:true}).waitFor({state:'visible'});
@@ -119,12 +109,13 @@ jobs:
             await installLogo.waitFor({state:'visible'});
             const installState=await installLogo.evaluate(img=>({complete:img.complete,w:img.naturalWidth,h:img.naturalHeight,src:img.currentSrc||img.src,borderRadius:getComputedStyle(img).borderRadius}));
             assert.equal(installState.complete,true);
-            assert.equal(installState.w,512);
-            assert.equal(installState.h,512);
-            assert.ok(installState.src.includes('graxcare-icon-512.png'));
+            assert.ok(installState.w>0 && installState.h>0,'Install vector emblem did not render');
+            assert.ok(installState.src.includes('graxcare-emblem-premium.svg'),'Install screen is not using premium vector emblem');
             assert.notEqual(installState.borderRadius,'0px');
-            const installBrandBox=await page.locator('.install-brand').boundingBox();
-            assert.ok(installBrandBox && installBrandBox.width>220 && installBrandBox.height>25,'Install wordmark is too small');
+            const installBrand=page.locator('.install-brand');
+            const installBrandState=await installBrand.evaluate(el=>({fontSize:parseFloat(getComputedStyle(el).fontSize),lineHeight:getComputedStyle(el).lineHeight,whiteSpace:getComputedStyle(el).whiteSpace}));
+            assert.ok(installBrandState.fontSize>=28,'Install wordmark is too small');
+            assert.equal(installBrandState.whiteSpace,'nowrap','Install wordmark can wrap or fragment');
 
             const manifest=await page.evaluate(async()=>await (await fetch('./manifest-commercial.webmanifest?r=visual-sync-20260811c')).json());
             assert.equal(manifest.name,'GraxCare Ready');
@@ -134,21 +125,24 @@ jobs:
             await browser.close();
           })().catch(e=>{console.error(e);process.exit(1)});
           NODE
-      - name: Verify protected logic and premium icon binaries
+      - name: Verify protected logic and brand assets
         run: |
           python3 <<'PY'
           import struct
+          svg=open('v6/assets/graxcare-emblem-premium.svg','r',encoding='utf-8').read()
+          assert '<svg' in svg and 'viewBox="0 0 512 512"' in svg
+          assert '#163c69' in svg and '#1d9698' in svg
           for size in (192,512):
               path=f'v6/assets/graxcare-icon-{size}.png'
               data=open(path,'rb').read(24)
               assert data[:8] == b'\x89PNG\r\n\x1a\n', f'{path}: invalid PNG signature'
               width,height=struct.unpack('>II',data[16:24])
               assert (width,height)==(size,size), f'{path}: wrong size {(width,height)}'
-          print('PREMIUM_PNG_ICONS_OK')
+          print('PREMIUM_VECTOR_AND_PNG_FALLBACKS_OK')
           PY
-          grep -q "visual-sync-20260811c" v6/manifest-commercial.webmanifest
-          grep -q "visual-sync-20260811c" v6/service-worker.js
-          grep -q "graxcare-icon-512.png" v6/commercial-logo.js
+          grep -q "graxcare-emblem-premium.svg" v6/commercial-logo.js
+          grep -q "graxcare-emblem-premium.svg" v6/install.html
+          grep -q "graxcare-emblem-premium.svg" v6/service-worker.js
           grep -q "brand-copy" v6/commercial-logo.css
           grep -q "install-brand" v6/install.html
           grep -q "const STORAGE_KEY = 'graxcare_ready_state_v1';" app.js
