@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#061a38">
+  <meta name="description" content="Install GraxCare Ready — The 60-Second Family Care Action System.">
+  <title>Install GraxCare Ready</title>
+  <link rel="manifest" href="./manifest-commercial.webmanifest?r=visual-sync-20260813d-fresh">
+  <link rel="icon" href="./assets/graxcare-icon-192.png?v=visual-sync-20260813d-fresh" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="./assets/graxcare-icon-512.png?v=visual-sync-20260813d-fresh">
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#f3f6fa;color:#0d1b3d}body{min-height:100vh;display:grid;place-items:center;padding:18px}.card{width:min(420px,calc(100vw - 36px));background:#fff;border:1px solid #dde4ec;border-radius:28px;padding:26px 22px;text-align:center;box-shadow:0 22px 60px rgba(6,26,56,.14)}.logo{width:150px;height:150px;object-fit:contain;border-radius:30px}.brand{font-family:Georgia,"Times New Roman",serif;font-size:31px;font-weight:700;margin:8px 0 8px;color:#0b315e}.brand span{color:#0a8f83}.tag{color:#53647c;line-height:1.4;margin:0 0 18px}.button{width:100%;min-height:54px;border:0;border-radius:15px;padding:14px 16px;background:#087c76;color:#fff;font-weight:800;font-size:16px}.status{min-height:20px;margin:10px 0 0;color:#6b7789;font-size:13px}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <img class="logo" src="./assets/graxcare-icon-512.png?v=visual-sync-20260813d-fresh" alt="GraxCare Ready">
+    <div class="brand">GraxCare <span>Ready</span></div>
+    <p class="tag">The 60-Second Family Care Action System</p>
+    <button id="install" class="button" type="button">Preparing installation…</button>
+    <p id="status" class="status">Preparing this device.</p>
+  </main>
+<script>
+(()=>{
+ const b=document.getElementById('install'),s=document.getElementById('status');let p=null;
+ const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+ if(standalone){b.textContent='Open GraxCare Ready';s.textContent='Already installed.';b.onclick=()=>location.href='./?fresh=20260813d';}
+ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();p=e;b.textContent='Install GraxCare Ready';s.textContent='Ready to install.';b.onclick=async()=>{b.disabled=true;p.prompt();const c=await p.userChoice;p=null;if(c.outcome==='accepted'){b.textContent='Open GraxCare Ready';s.textContent='Installation complete.';b.disabled=false;b.onclick=()=>location.href='./?fresh=20260813d';}else{b.disabled=false;b.textContent='Install GraxCare Ready';s.textContent='Installation not completed.';}};});
+ if('serviceWorker' in navigator)navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+ setTimeout(()=>{if(!p&&!standalone){b.textContent='Open GraxCare Ready';s.textContent='If Install is not shown, use Chrome menu → Install app.';b.onclick=()=>location.href='./?fresh=20260813d';}},1800);
+})();
+</script>
+</body>
+</html>
