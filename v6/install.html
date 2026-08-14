@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#061a38">
   <meta name="description" content="Install GraxCare Ready — The 60-Second Family Care Action System.">
   <title>Install GraxCare Ready</title>
-  <link rel="manifest" href="./manifest-commercial.webmanifest?r=visual-sync-20260811c">
-  <link rel="icon" href="./assets/graxcare-emblem-premium.svg?v=visual-sync-20260811c" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="./assets/graxcare-icon-512.png?v=visual-sync-20260811c">
+  <link rel="manifest" href="./manifest-commercial.webmanifest?r=install-flow-20260814a">
+  <link rel="icon" href="./assets/graxcare-icon-192.png?v=install-flow-20260814a" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="./assets/graxcare-icon-512.png?v=install-flow-20260814a">
   <style>
     *{box-sizing:border-box}
     html,body{margin:0;width:100%;min-height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#f3f6fa;color:#0d1b3d;text-rendering:geometricPrecision;-webkit-font-smoothing:antialiased}
@@ -26,77 +26,70 @@
 </head>
 <body>
   <main class="card">
-    <img id="installLogo" class="logo" src="./assets/graxcare-emblem-premium.svg?v=visual-sync-20260811c" width="154" height="154" alt="GraxCare Ready emblem">
+    <img id="installLogo" class="logo" src="./assets/graxcare-icon-512.png?v=install-flow-20260814a" width="154" height="154" alt="GraxCare Ready">
     <div class="install-brand" aria-label="GraxCare Ready"><span class="brand-main">GraxCare</span> <span class="brand-ready">Ready</span></div>
     <p class="tagline">The 60-Second Family Care Action System</p>
     <button id="primaryButton" class="button" type="button" disabled>Preparing installation…</button>
-    <p id="status" class="status">Preparing this device.</p>
+    <p id="status" class="status">Waiting for Chrome installation readiness.</p>
   </main>
   <script>
     (()=>{
       const button=document.getElementById('primaryButton');
       const status=document.getElementById('status');
-      const logo=document.getElementById('installLogo');
       let promptEvent=null;
       const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 
-      logo.addEventListener('error',()=>{
-        if(logo.dataset.fallback==='1') return;
-        logo.dataset.fallback='1';
-        logo.src='./assets/graxcare-icon-512.png?v=visual-sync-20260811c';
-      });
-
-      function showOpen(message='Ready to open.'){
+      function showOpen(message='Installation complete.'){
         button.disabled=false;
         button.textContent='Open GraxCare Ready';
         button.dataset.mode='open';
         status.textContent=message;
       }
 
-      if(standalone) showOpen('Already installed on this device.');
-
-      window.addEventListener('beforeinstallprompt',event=>{
-        event.preventDefault();
-        promptEvent=event;
-        button.disabled=false;
-        button.dataset.mode='install';
-        button.textContent='Install GraxCare Ready';
-        status.textContent='Ready to install.';
-      });
+      if(standalone){
+        showOpen('Already installed on this device.');
+      }else{
+        window.addEventListener('beforeinstallprompt',event=>{
+          event.preventDefault();
+          promptEvent=event;
+          button.disabled=false;
+          button.dataset.mode='install';
+          button.textContent='Install GraxCare Ready';
+          status.textContent='Ready. Tap the button to install the app.';
+        });
+      }
 
       window.addEventListener('appinstalled',()=>{
         promptEvent=null;
-        showOpen('Installation complete.');
+        showOpen('Installation complete. GraxCare Ready is installed on this device.');
       });
 
       button.addEventListener('click',async()=>{
         if(button.dataset.mode==='install'&&promptEvent){
           button.disabled=true;
-          promptEvent.prompt();
+          await promptEvent.prompt();
           const choice=await promptEvent.userChoice;
-          promptEvent=null;
-          if(choice.outcome==='accepted') showOpen('Installation complete.');
-          else {
+          if(choice.outcome==='accepted'){
+            status.textContent='Installing GraxCare Ready…';
+          }else{
             button.disabled=false;
             button.textContent='Install GraxCare Ready';
             button.dataset.mode='install';
-            status.textContent='Installation not completed.';
+            status.textContent='Installation cancelled.';
           }
+          promptEvent=null;
           return;
         }
-        location.href='./?build=visual-sync-20260811c';
+        if(button.dataset.mode==='open') location.href='./';
       });
 
-      if('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
-
-      setTimeout(()=>{
-        if(!promptEvent&&!standalone){
-          button.disabled=false;
-          button.textContent='Open GraxCare Ready';
-          button.dataset.mode='open';
-          status.textContent='Use Chrome menu → Install app to add it to your home screen.';
-        }
-      },2200);
+      if('serviceWorker' in navigator){
+        navigator.serviceWorker.register('./service-worker.js',{scope:'./'}).catch(()=>{
+          status.textContent='Chrome could not prepare installation. Reload this page.';
+        });
+      }else{
+        status.textContent='This browser does not support app installation.';
+      }
     })();
   </script>
 </body>
