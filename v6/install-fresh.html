@@ -6,16 +6,16 @@
   <meta name="theme-color" content="#061a38">
   <meta name="description" content="Install GraxCare Ready — The 60-Second Family Care Action System.">
   <title>Install GraxCare Ready</title>
-  <link rel="manifest" href="./manifest-commercial.webmanifest?r=visual-sync-20260813h">
-  <link rel="icon" href="./assets/graxcare-icon-192.png?v=visual-sync-20260813h" sizes="192x192" type="image/png">
-  <link rel="apple-touch-icon" href="./assets/graxcare-icon-512.png?v=visual-sync-20260813h">
+  <link rel="manifest" href="./manifest-commercial.webmanifest?r=premium-splash-20260815a">
+  <link rel="icon" href="./assets/graxcare-emblem-premium.svg?v=premium-splash-20260815a" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./assets/graxcare-icon-512.png?v=premium-splash-20260815a">
   <style>
     *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#f3f6fa;color:#0d1b3d}body{min-height:100vh;display:grid;place-items:center;padding:18px}.card{width:min(420px,calc(100vw - 36px));background:#fff;border:1px solid #dde4ec;border-radius:28px;padding:26px 22px;text-align:center;box-shadow:0 22px 60px rgba(6,26,56,.14)}.logo-wrap{width:154px;height:154px;margin:0 auto 12px;border-radius:34px;background:#fff;display:grid;place-items:center;overflow:hidden;box-shadow:0 8px 24px rgba(6,26,56,.08)}.logo{width:154px;height:154px;display:block}.brand{font-family:Georgia,"Times New Roman",serif;font-size:31px;font-weight:700;margin:8px 0 8px;color:#0b315e}.brand span{color:#0a8f83}.tag{color:#53647c;line-height:1.4;margin:0 0 18px}.button{width:100%;min-height:54px;border:0;border-radius:15px;padding:14px 16px;background:#087c76;color:#fff;font-weight:800;font-size:16px;cursor:pointer}.button:disabled{opacity:.68;cursor:wait}.status{min-height:20px;margin:10px 0 0;color:#6b7789;font-size:13px;line-height:1.4}
   </style>
 </head>
 <body>
   <main class="card">
-    <div class="logo-wrap"><img class="logo" src="./assets/graxcare-emblem-premium.svg?v=visual-sync-20260813h" alt="GraxCare Ready"></div>
+    <div class="logo-wrap"><img class="logo" src="./assets/graxcare-emblem-premium.svg?v=premium-splash-20260815a" alt="GraxCare Ready"></div>
     <div class="brand">GraxCare <span>Ready</span></div>
     <p class="tag">The 60-Second Family Care Action System</p>
     <button id="install" class="button" type="button" disabled>Preparing installation…</button>
@@ -25,7 +25,7 @@
 (()=>{
  const b=document.getElementById('install'),s=document.getElementById('status');let p=null;
  const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
- function setOpen(){b.disabled=false;b.textContent='Open GraxCare Ready';s.textContent='Already installed on this device.';b.onclick=()=>location.href='./?fresh=20260813h';}
+ function setOpen(){b.disabled=false;b.textContent='Open GraxCare Ready';s.textContent='Already installed on this device.';b.onclick=()=>location.href='./?build=premium-splash-20260815a';}
  function setManual(){b.disabled=false;b.textContent='Show installation step';s.textContent='Chrome has not shown the automatic install prompt yet.';b.onclick=()=>alert('Tap the ⋮ menu in the top-right corner of Chrome, then choose “Install app” or “Add to Home screen”.');}
  if(standalone){setOpen();return;}
  window.addEventListener('beforeinstallprompt',e=>{
@@ -33,13 +33,8 @@
    b.onclick=async()=>{b.disabled=true;await p.prompt();const c=await p.userChoice;p=null;if(c.outcome==='accepted'){setOpen();}else{b.disabled=false;b.textContent='Install GraxCare Ready';s.textContent='Installation not completed.';}};
  });
  window.addEventListener('appinstalled',()=>setOpen());
- if('serviceWorker' in navigator){
-   navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});
- }
- Promise.race([
-   ('serviceWorker' in navigator ? navigator.serviceWorker.ready : Promise.resolve()),
-   new Promise(resolve=>setTimeout(resolve,3500))
- ]).finally(()=>setTimeout(()=>{if(!p&&!standalone)setManual();},1200));
+ if('serviceWorker' in navigator){navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});}
+ Promise.race([('serviceWorker' in navigator?navigator.serviceWorker.ready:Promise.resolve()),new Promise(resolve=>setTimeout(resolve,3500))]).finally(()=>setTimeout(()=>{if(!p&&!standalone)setManual();},1200));
 })();
 </script>
 </body>
