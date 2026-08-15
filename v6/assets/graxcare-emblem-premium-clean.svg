@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="GraxCare Ready emblem">
+  <rect width="512" height="512" rx="72" fill="#ffffff"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M190 154 C135 196 116 275 140 346 C162 411 219 442 286 436 C235 424 198 392 181 349 C154 281 177 213 237 177 C280 151 330 154 371 181" stroke="#163c69" stroke-width="56"/>
+    <path d="M238 313 C238 370 272 404 321 404 C374 404 405 367 405 315 C405 303 404 293 402 284 L319 284" stroke="#1d9698" stroke-width="44"/>
+  </g>
+  <circle cx="218" cy="103" r="28" fill="#163c69"/>
+  <circle cx="228" cy="262" r="21" fill="#1d9698"/>
+</svg>
