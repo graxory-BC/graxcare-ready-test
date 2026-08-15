@@ -3,7 +3,7 @@
   "name": "GraxCare Ready",
   "short_name": "GraxCare Ready",
   "description": "The 60-Second Family Care Action System",
-  "start_url": "/graxcare-ready-test/v6/?build=premium-clean-20260815c",
+  "start_url": "/graxcare-ready-test/v6/?build=premium-restore-20260815d",
   "scope": "/graxcare-ready-test/v6/",
   "display": "standalone",
   "display_override": ["standalone"],
@@ -14,13 +14,13 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/graxcare-ready-test/v6/assets/graxcare-emblem-premium-clean.svg?v=premium-clean-20260815c",
+      "src": "/graxcare-ready-test/v6/assets/graxcare-emblem-premium-clean.svg?v=premium-restore-20260815d",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "/graxcare-ready-test/v6/assets/graxcare-emblem-premium-clean.svg?v=premium-clean-20260815c",
+      "src": "/graxcare-ready-test/v6/assets/graxcare-emblem-premium-clean.svg?v=premium-restore-20260815d",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"
