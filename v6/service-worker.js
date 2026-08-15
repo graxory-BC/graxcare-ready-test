@@ -1,15 +1,15 @@
-const CACHE = 'graxcare-ready-premium-splash-20260815a';
+const CACHE = 'graxcare-ready-premium-splash-20260815b';
 const APP_SHELL = [
   './',
   './index.html',
-  './manifest-commercial.webmanifest?r=premium-splash-20260815a',
-  './assets/graxcare-emblem-premium.svg?v=premium-splash-20260815a',
-  './assets/graxcare-icon-1024.png?v=premium-splash-20260815a',
+  './manifest-commercial.webmanifest?r=premium-splash-20260815b',
+  './assets/graxcare-emblem-premium.svg?v=premium-splash-20260815b',
+  './assets/graxcare-icon-1024.png?v=premium-splash-20260815b',
   './visual-v6.css?r=compact-commercial-20260807m',
   './visual-sync.css?r=visual-sync-20260808a',
   './premium-icon-art.css?r=compact-commercial-20260807m',
-  './commercial-logo.css?r=visual-sync-20260811c',
-  './commercial-logo.js?r=visual-sync-20260811c',
+  './commercial-logo.css?r=premium-splash-20260815b',
+  './commercial-logo.js?r=premium-splash-20260815b',
   './update-shell.js?r=visual-sync-20260808a',
   '../styles.css?r=compact-commercial-20260807m',
   '../visual-final.css?r=compact-commercial-20260807m',
