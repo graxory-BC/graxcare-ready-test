@@ -7,7 +7,23 @@
     'Caregiver', 'Guardian', 'Other'
   ];
 
+  function updateInclusiveCopy() {
+    const addButton = document.getElementById('addProfileButton');
+    if (addButton) addButton.textContent = 'Add person';
+
+    const modalTitle = document.getElementById('modalTitle');
+    if (modalTitle?.textContent === 'Add family member') modalTitle.textContent = 'Add person';
+    if (modalTitle?.textContent === 'Edit family member') modalTitle.textContent = 'Edit person';
+
+    const empty = document.querySelector('#profilesList .empty-state');
+    if (empty?.textContent.includes('No family members yet.')) {
+      empty.innerHTML = '<strong>No people added yet.</strong><br>Add one short profile to start using the action system.';
+    }
+  }
+
   function enhanceRelationshipField() {
+    updateInclusiveCopy();
+
     const input = document.getElementById('relationship');
     if (!input || input.dataset.graxRelationshipReady === 'true') return;
 
@@ -35,5 +51,7 @@
   if (root) {
     new MutationObserver(enhanceRelationshipField).observe(root, { childList: true, subtree: true });
   }
+
+  updateInclusiveCopy();
   document.addEventListener('click', () => setTimeout(enhanceRelationshipField, 0));
 })();
