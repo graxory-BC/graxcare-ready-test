@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en" data-visual-build="premium-restore-20260815d">
+<html lang="en" data-visual-build="conversion-clarity-20260817a">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#061a38">
-  <meta name="description" content="GraxCare Ready — The 60-Second Family Care Action System.">
+  <meta name="description" content="GraxCare Ready helps families know what to do next during health, medication, hospital, caregiver, and safety situations.">
   <title>GraxCare Ready</title>
   <script>if(navigator.maxTouchPoints>0&&Math.min(screen.width,screen.height)<=600)document.documentElement.classList.add('phone-ui');</script>
   <style>html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}#situationsGrid,.app-shell,.panel,.view{min-width:0;max-width:100%}</style>
@@ -28,9 +28,9 @@
   </header>
   <main id="main" class="app-shell" tabindex="-1">
     <section id="homeView" class="view" data-view="home">
-      <div class="hero-card"><p class="eyebrow">The 60-Second Family Care Action System</p><h1>When something changes, everyone knows what to do next.</h1><p>Choose a person, choose the situation, and follow a clear action list.</p></div>
-      <section class="panel" aria-labelledby="whoTitle"><div class="section-heading"><div><p class="step-label">Step 1 of 3</p><h2 id="whoTitle">Who needs help?</h2></div><button id="addProfileButton" class="button button-secondary" type="button">Add family member</button></div><div id="profilesList" class="profiles-grid" aria-live="polite"></div></section>
-      <section class="panel" aria-labelledby="situationTitle"><div class="section-heading"><div><p class="step-label">Step 2 of 3</p><h2 id="situationTitle">What is happening?</h2></div><p id="selectionHint" class="selection-hint">Select a family member first.</p></div><div id="situationsGrid" class="situations-grid"></div></section>
+      <div class="hero-card"><p class="eyebrow">Family info. Real-life situations. Clear next steps.</p><h1>Know what to do when a family member needs help.</h1><p>Choose the person. Choose what happened. Follow the steps.</p></div>
+      <section class="panel" aria-labelledby="whoTitle"><div class="section-heading"><div><p class="step-label">Step 1 of 3</p><h2 id="whoTitle">Who needs help?</h2><p class="selection-hint">This is the person you may need to help. Start with a name. Add details later.</p></div><button id="addProfileButton" class="button button-secondary" type="button">Add family member</button></div><div id="profilesList" class="profiles-grid" aria-live="polite"></div></section>
+      <section class="panel" aria-labelledby="situationTitle"><div class="section-heading"><div><p class="step-label">Step 2 of 3</p><h2 id="situationTitle">What’s happening?</h2></div><p id="selectionHint" class="selection-hint">Select a family member first.</p></div><div id="situationsGrid" class="situations-grid"></div></section>
     </section>
     <section id="actionView" class="view" data-view="action" hidden><button class="text-button back-button" type="button" data-route="home">← Back</button><div id="actionContent"></div></section>
     <section id="followupView" class="view" data-view="followup" hidden><div class="page-heading"><div><p class="eyebrow">Follow Up</p><h1>Keep the next steps organized.</h1></div><button id="addFollowupButton" class="button button-primary" type="button">Add follow-up</button></div><div id="followupList" class="stack-list"></div></section>
