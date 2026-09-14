@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GRAXORY BLOQUE 2B</title>
+<style>body{font-family:Arial,sans-serif;max-width:720px;margin:60px auto;padding:24px;background:#f7f7f7;color:#111}.box{background:white;padding:28px;border-radius:12px;box-shadow:0 2px 14px #0001}button{font-size:18px;padding:14px 20px;border:0;border-radius:8px;cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}code{word-break:break-all}</style></head>
+<body><div class="box"><h2>GRAXORY BLOQUE 2B</h2>
+<p id="status">Verificando integridad del ejecutor...</p>
+<button id="download" disabled>Descargar ejecutor verificado</button>
+<p><small>SHA-256 esperado: <code>e7a8eced422b038d5f09c4e4257db2107684d3be151b3af0f7f0e14fa85411f9</code></small></p>
+</div>
+<script>
+(async()=>{
+ const status=document.getElementById('status'),btn=document.getElementById('download');
+ try{
+  let b64='';
+  for(let i=1;i<=8;i++){const r=await fetch('part'+i+'.txt',{cache:'no-store'});if(!r.ok)throw new Error('parte '+i);b64+=(await r.text()).trim();}
+  const s=atob(b64), bytes=new Uint8Array(s.length); for(let i=0;i<s.length;i++)bytes[i]=s.charCodeAt(i);
+  const hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(b=>b.toString(16).padStart(2,'0')).join('');
+  if(hash!=='e7a8eced422b038d5f09c4e4257db2107684d3be151b3af0f7f0e14fa85411f9')throw new Error('hash '+hash);
+  status.textContent='Integridad verificada. Archivo listo.';
+  btn.disabled=false;
+  btn.onclick=()=>{const u=URL.createObjectURL(new Blob([bytes],{type:'application/octet-stream'}));const a=document.createElement('a');a.href=u;a.download='GRAXORY_BLOQUE2B_PROMOVER_VERSION_EXISTENTE.cmd';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000);};
+ }catch(e){status.textContent='VERIFICACION NO PASS. No descargues nada. '+e.message;}
+})();
+</script></body></html>
